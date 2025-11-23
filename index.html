@@ -85,6 +85,16 @@
             background-color: #EEF2FF;
             border-color: #5D3FD3;
         }
+        /* Custom styles for the Notice Box */
+        .notice-box {
+            background-color: #FAF5FF; /* Very light purple */
+            border: 1px solid #E9D5FF;
+            border-radius: 0.75rem;
+        }
+        .option-box {
+            background-color: #F3E8FF; /* Slightly darker light purple */
+            border-radius: 0.5rem;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -92,75 +102,96 @@
     <div id="app" class="main-content flex flex-col items-center p-4 sm:p-8">
     </div>
 
-    <footer class="bg-gray-100 py-8 px-4 w-full border-t border-gray-200">
-        <div class="max-w-5xl mx-auto">
+    <footer class="bg-gray-100 py-10 px-4 w-full border-t border-gray-200">
+        <div class="max-w-6xl mx-auto">
             <!-- Footer Container: Stack on mobile, Side-by-Side on Desktop -->
             <div class="flex flex-col md:flex-row gap-10">
                 
                 <!-- Left Side: Locations (Wider) -->
-                <div class="md:w-3/4">
-                    <h3 class="text-lg font-semibold mb-4 text-purple-oven">Locations & Hours</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+                <div class="md:w-2/3">
+                    <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Locations & Hours
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm">
                         <!-- Metro Manila Locations -->
                         <div>
-                            <p class="font-bold text-gray-800 mb-1">Metro Manila (0800 - 2100)</p>
-                            <ul class="space-y-1">
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Pasig" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Pasig</a></li>
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+San+Juan" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">San Juan</a></li>
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Alabang" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Alabang</a></li>
+                            <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Metro Manila</p>
+                            <p class="text-xs text-gray-500 mb-2">(0800 - 2100)</p>
+                            <ul class="space-y-2">
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Pasig" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Pasig</a></li>
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+San+Juan" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">San Juan</a></li>
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Alabang" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Alabang</a></li>
                             </ul>
                         </div>
                         <!-- Makati Locations -->
                         <div>
-                            <p class="font-bold text-gray-800 mb-1">Makati</p>
-                            <ul class="space-y-1">
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+San+Antonio" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">San Antonio</a></li>
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Legazpi+Village" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Legaspi Village</a></li>
-                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Sacred+Heart" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Sacred Heart</a></li>
+                            <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Makati</p>
+                            <p class="text-xs text-gray-500 mb-2">(0800 - 2100)</p>
+                            <ul class="space-y-2">
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+San+Antonio" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">San Antonio</a></li>
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Legazpi+Village" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Legaspi Village</a></li>
+                                <li><a href="https://www.google.com/maps/search/Purple+Oven+Sacred+Heart" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Sacred Heart</a></li>
                             </ul>
                         </div>
                         <!-- QC & Laguna -->
                         <div>
-                            <div class="mb-4">
-                                <p class="font-bold text-gray-800 mb-1">Quezon City</p>
-                                <ul class="space-y-1">
-                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Temple+Drive" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Temple Drive</a></li>
-                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Scout+Rallos" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Scout Rallos</a></li>
+                            <div class="mb-6">
+                                <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Quezon City</p>
+                                <p class="text-xs text-gray-500 mb-2">(0800 - 2100)</p>
+                                <ul class="space-y-2">
+                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Temple+Drive" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Temple Drive</a></li>
+                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Scout+Rallos" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Scout Rallos</a></li>
                                 </ul>
                             </div>
                             <div>
-                                <p class="font-bold text-gray-800 mb-1">Laguna (0900 - 2100)</p>
-                                <ul class="space-y-1">
-                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Santa+Rosa+Laguna" target="_blank" class="text-gray-600 hover:text-purple-oven location-link">Santa Rosa</a></li>
+                                <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Laguna</p>
+                                <p class="text-xs text-gray-500 mb-2">(0900 - 2100)</p>
+                                <ul class="space-y-2">
+                                    <li><a href="https://www.google.com/maps/search/Purple+Oven+Santa+Rosa+Laguna" target="_blank" class="text-gray-600 hover:text-purple-oven location-link font-medium">Santa Rosa</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Side: Contact (Narrower) -->
-                <div class="md:w-1/4 md:border-l md:border-gray-300 md:pl-8">
-                    <h3 class="text-lg font-semibold mb-1 text-purple-oven">Contact</h3>
-                    <p class="text-xs text-gray-500 mb-4">(0900 - 1900)</p>
+                <!-- Right Side: Contact (Narrower, more prominent) -->
+                <div class="md:w-1/3 md:border-l md:border-gray-300 md:pl-10">
+                    <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        Contact Us
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-6 font-medium">(0900 - 1900)</p>
                     
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex items-start gap-2">
-                            <span class="text-gray-500 w-16">Landline:</span>
-                            <a href="tel:+63286314221" class="text-purple-oven font-medium hover:underline">+632 8631 4221</a>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="text-gray-500 w-16">Viber:</span>
-                            <a href="tel:+639177103227" class="text-purple-oven font-medium hover:underline">+63917 710 3227</a>
-                        </li>
-                        <li class="flex flex-col mt-2">
-                            <span class="text-gray-500 mb-1">Email:</span>
-                            <a href="mailto:orderonline@purpleoven.com.ph" class="text-purple-oven font-medium break-all hover:underline">orderonline@purpleoven.com.ph</a>
-                        </li>
-                    </ul>
+                    <div class="space-y-4">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Landline</span>
+                            <a href="tel:+63286314221" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-lg transition-colors inline-block border border-transparent hover:border-purple-100">
+                                +632 8631 4221
+                            </a>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Viber / Mobile</span>
+                            <a href="tel:+639177103227" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-lg transition-colors inline-block border border-transparent hover:border-purple-100">
+                                +63917 710 3227
+                            </a>
+                        </div>
+                        <div class="flex flex-col pt-2">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Email</span>
+                            <a href="mailto:orderonline@purpleoven.com.ph" class="text-base text-gray-700 font-medium hover:text-purple-oven break-all hover:underline">
+                                orderonline@purpleoven.com.ph
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="mt-8 text-center text-xs text-gray-500 border-t pt-4">
+            <div class="mt-10 text-center text-xs text-gray-500 border-t pt-6">
                 © 2025 Purple Oven. All rights reserved.
             </div>
         </div>
@@ -254,7 +285,7 @@
                 category: "Bars",
                 subCategories: [
                     {
-                        name: "",
+                        name: "", /* Subheader removed as requested */
                         items: [
                             { name: "Mango Bars - Half (16 pcs)" },
                             { name: "Lemon Bars - Half (16 pcs)" },
@@ -276,7 +307,7 @@
                 category: "Cookies",
                 subCategories: [
                     {
-                        name: "",
+                        name: "", /* Subheader removed as requested */
                         items: [
                             { name: "Reese’s Peanut Butter Chip Cookie - PC" },
                             { name: "Double Chocolate Chip Cookie - PC" },
@@ -294,7 +325,7 @@
                 category: "Loaves",
                 subCategories: [
                     {
-                        name: "",
+                        name: "", /* Subheader removed as requested */
                         items: [
                             { name: "Banana Loaf - Loaf" },
                             { name: "Carrot Walnut Loaf - Loaf" },
@@ -309,7 +340,7 @@
                 category: "Snack Packs",
                 subCategories: [
                     {
-                        name: "",
+                        name: "", /* Subheader removed as requested */
                         items: [
                             { name: "Chocolate Carousel - Pack" },
                             { name: "Purple Crumble - Pack" }
@@ -380,7 +411,7 @@
                 category: "Reusable Bag",
                 subCategories: [
                     {
-                        name: "",
+                        name: "", /* Subheader removed as requested */
                         items: [
                             { name: "Large Bag - pc" },
                             { name: "Small Bag - pc" }
@@ -522,7 +553,8 @@
         /** Switches between Pick Up and Delivery fields */
         function handleOrderTypeChange(type) {
             const pickupSelect = document.getElementById('pickupSelect');
-            const deliveryNotice = document.getElementById('deliveryNotice');
+            const deliveryNoticeContainer = document.getElementById('deliveryNoticeContainer');
+            const deliveryConsent = document.getElementById('deliveryConsent');
             const deliveryInput = document.getElementById('deliveryInput');
             const landmarkInput = document.getElementById('landmarkInput');
             const locationLabel = document.getElementById('locationLabel');
@@ -533,28 +565,33 @@
                 pickupSelect.classList.remove('hidden');
                 pickupSelect.required = true;
                 
-                // Hide Delivery Fields
-                deliveryNotice.classList.add('hidden');
+                // Hide Delivery Fields & Consent
+                deliveryNoticeContainer.classList.add('hidden');
+                deliveryConsent.required = false;
+                deliveryConsent.checked = false;
+                
                 deliveryInput.classList.add('hidden');
                 deliveryInput.required = false;
                 landmarkInput.classList.add('hidden');
                 giftSection.classList.add('hidden');
                 
-                locationLabel.innerText = 'Store Location';
+                locationLabel.innerText = 'Store Location *';
                 deliveryInput.value = ''; 
             } else {
                 // Hide Pickup
                 pickupSelect.classList.add('hidden');
                 pickupSelect.required = false;
                 
-                // Show Delivery Fields
-                deliveryNotice.classList.remove('hidden');
+                // Show Delivery Fields & Consent
+                deliveryNoticeContainer.classList.remove('hidden');
+                deliveryConsent.required = true;
+                
                 deliveryInput.classList.remove('hidden');
                 deliveryInput.required = true;
                 landmarkInput.classList.remove('hidden');
                 giftSection.classList.remove('hidden');
                 
-                locationLabel.innerText = 'Delivery Address';
+                locationLabel.innerText = 'Delivery Address *';
                 pickupSelect.selectedIndex = 0; 
             }
         }
@@ -598,8 +635,12 @@
                     let itemName = parts[0];
                     let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : ""; // Rejoin if multiple dashes, though unexpected
 
-                    // Updated Grid Layout: Fixed widths for Qty and Unit to ensure alignment
-                    return `<div class="grid grid-cols-[20px_1fr_50px_80px] sm:grid-cols-[20px_1fr_64px_120px] gap-2 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
+                    // Updated Grid Layout: Narrower Quantity, Fixed Unit Width
+                    // col-1: Checkbox (20px)
+                    // col-2: Name (1fr)
+                    // col-3: Quantity (40px) - Narrower
+                    // col-4: Unit (100px) - Fixed width, alignment
+                    return `<div class="grid grid-cols-[20px_1fr_40px_100px] sm:grid-cols-[20px_1fr_48px_140px] gap-3 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
                                 <!-- Checkbox -->
                                 <div class="flex items-center justify-center h-full">
                                     <input type="checkbox" id="${itemId}" name="orderItem" value="${item.name}"
@@ -615,12 +656,12 @@
                                 <!-- Quantity Input (Narrower) -->
                                 <div>
                                     <input type="number" name="quantity_${item.name}" placeholder="" min="1" value="" disabled
-                                        class="w-full p-1 border border-gray-300 rounded-md text-center text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
-                                        id="qty_${itemId}">
+                                           class="w-full p-1 border border-gray-300 rounded-md text-center text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
+                                           id="qty_${itemId}">
                                 </div>
                                 
                                 <!-- Unit Display (Fixed Width for Alignment) -->
-                                <div class="text-xs text-gray-500 font-medium truncate" title="${itemUnit}">
+                                <div class="text-xs text-gray-500 font-medium truncate pl-1" title="${itemUnit}">
                                     ${itemUnit}
                                 </div>
                             </div>`;
@@ -648,334 +689,296 @@
                         const subCat = cat.subCategories[0]; // Get the first subcategory
                         
                         // Use a simple non-collapsible container for items
-                        html += `<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 space-y-2">
-                                    <p class="font-bold text-sm text-gray-700 mb-3 pb-2 border-b border-gray-100">${subCat.name}</p>
-                                    ${renderItemFields(subCat.items, catIndex, 0)}
-                                </div>`;
+                        html += `
+                            <div class="space-y-1">
+                                ${renderItemFields(subCat.items, catIndex, 0)}
+                            </div>
+                        `;
                     }
                 } else {
-                    // NESTED STRUCTURE (Cakes, Bread and Pastries): Use collapsible subcategories
+                    // NESTED: Category has multiple subcategories, so use nested <details>
                     cat.subCategories.forEach((subCat, subCatIndex) => {
-                        const subCatId = `subcat_${catIndex}_${subCatIndex}`;
-                        
-                        // Use nested <details> for collapsible subcategory. All collapsed by default.
-                        html += `<details class="bg-white rounded-lg shadow-sm border border-gray-100 p-0">
-                                    <summary class="flex items-center justify-between cursor-pointer p-3 hover:bg-gray-50 nested-summary rounded-lg">
-                                        <p class="font-semibold text-gray-700 text-sm">${subCat.name}</p>
+                        const subCategoryId = `subcat_${catIndex}_${subCatIndex}`;
+                        html += `<details class="bg-white p-0 rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                                    <summary class="nested-summary flex items-center justify-between cursor-pointer p-3 hover:bg-gray-50 rounded-lg rounded-b-none transition-colors">
+                                        <h4 class="text-base font-semibold text-gray-700">${subCat.name}</h4>
                                         <svg class="w-4 h-4 text-gray-500 summary-icon" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                         </svg>
                                     </summary>
-                                    
-                                    <div class="px-3 pb-3 pt-2 space-y-2">`; // Content for the sub category
-                        
-                        html += renderItemFields(subCat.items, catIndex, subCatIndex);
-                        
-                        html += `   </div>
+                                    <div class="px-3 pb-3 space-y-1 pt-2">
+                                        ${renderItemFields(subCat.items, catIndex, subCatIndex)}
+                                    </div>
                                 </details>`;
                     });
                 }
-
-                html += `   </div>
-                        </details>`;
+                
+                // Close the main category content div and details tag
+                html += `</div></details>`;
             });
-            
+
             return html;
         }
 
         /** Renders the Order Form View. */
         function renderOrderForm() {
-            APP_ROOT.classList.add('justify-center');
-            const brand = state.selectedBrand;
+            APP_ROOT.classList.remove('justify-center');
+            const themeClass = 'bg-purple-oven text-white';
+            const borderClass = 'focus:border-purple-oven focus:ring-purple-oven';
             
-            // --- Date Calculation for Min/Max attributes ---
-            const today = new Date();
+            // Build Time Options
+            const timeOptions = timeSlots.map(t => `<option value="${t}">${t}</option>`).join('');
             
-            // Calculate Tomorrow (Min Date)
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const minDateStr = tomorrow.toISOString().split('T')[0];
+            // Build Location Options for Pick Up
+            const locationOptions = pickUpLocations.map(l => `<option value="${l}">${l}</option>`).join('');
 
-            // Calculate 1 Year from Tomorrow (Max Date)
-            const maxDate = new Date(tomorrow);
-            maxDate.setFullYear(maxDate.getFullYear() + 1);
-            const maxDateStr = maxDate.toISOString().split('T')[0];
-            // -----------------------------------------------
+            // Calculate Date Min and Max
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const nextYear = new Date();
+            nextYear.setDate(tomorrow.getDate());
+            nextYear.setFullYear(tomorrow.getFullYear() + 1);
+            const nextYearStr = nextYear.toISOString().split('T')[0];
 
             return `
-                <div class="w-full max-w-2xl animate-fadeIn mb-12">
-                     <div class="mb-6 flex items-center justify-between">
-                        <button onclick="showMenu('${brand}')" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-150">
-                            ← Back to Menu
+                <div class="w-full max-w-4xl animate-fadeIn">
+                    <div class="flex items-center justify-between mb-6">
+                        <button onclick="showLanding()" class="text-sm text-gray-600 hover:text-purple-oven transition">
+                            ← Back to Home
                         </button>
-                        <h2 class="text-2xl font-bold text-purple-oven">Place an Order</h2>
-                        <div class="w-8"></div> <!-- Spacer for centering -->
+                        <h2 class="text-2xl font-bold text-gray-800">Order Form</h2>
+                        <div class="w-20"></div> <!-- Spacer for centering -->
                     </div>
 
-                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-purple-200">
+                    <form id="orderForm" onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
                         
-                         <!-- Office Hours and Options Section -->
-                        <div class="mb-8 border-2 border-yellow-300 bg-yellow-50 rounded-xl overflow-hidden">
-                            <div class="bg-yellow-100 px-6 py-4 border-b border-yellow-200">
-                                <h3 class="text-xl font-bold text-yellow-800 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Office Hours
-                                </h3>
-                                <p class="text-yellow-800 mt-1 text-sm font-medium">Our team is available to process your orders daily from 9:00 AM to 7:00 PM.</p>
-                            </div>
+                        <!-- Office Hours & Options Section (New) -->
+                        <div class="mb-10 notice-box p-6">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Office Hours</h3>
+                            <p class="text-sm text-gray-700 mb-6">Our team is available to process your orders daily from 9:00 AM to 7:00 PM.</p>
 
-                            <div class="p-6 flex flex-col gap-6">
-                                <!-- Option 1: Call Us -->
-                                <div>
-                                    <h4 class="font-bold text-purple-oven text-lg mb-3">Option 1: Call Us</h4>
+                            <div class="space-y-4">
+                                <!-- Option 1 -->
+                                <div class="option-box p-4">
+                                    <h4 class="font-bold text-purple-oven mb-2">Option 1: Call Us</h4>
                                     <p class="text-sm text-gray-700 mb-3">For immediate assistance and orders for today, please give us a call:</p>
-                                    <div class="flex flex-col sm:flex-row gap-3">
-                                        <a href="tel:+63286314221" class="phone-btn flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-white border-2 border-purple-200 rounded-lg text-purple-700 font-bold shadow-sm transition-all active:scale-95">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                            </svg>
-                                            Landline
-                                        </a>
-                                        <a href="tel:+639177103227" class="phone-btn flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-white border-2 border-purple-200 rounded-lg text-purple-700 font-bold shadow-sm transition-all active:scale-95">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
-                                            Mobile / Viber
-                                        </a>
+                                    <div class="text-sm font-medium text-gray-800 space-y-2">
+                                        <p>Landline: 
+                                            <a href="tel:+63286314221" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
+                                                +632 8631 4221
+                                            </a>
+                                        </p>
+                                        <p>Mobile / Viber: 
+                                            <a href="tel:+639177103227" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
+                                                +63917 710 3227
+                                            </a>
+                                        </p>
                                     </div>
                                 </div>
 
-                                <hr class="border-gray-200">
-
-                                <!-- Option 2: Advance Orders -->
-                                <div>
-                                    <h4 class="font-bold text-purple-oven text-lg mb-2">Option 2: Advance Orders</h4>
-                                    <p class="text-sm text-gray-700 leading-relaxed">For orders for tomorrow and onwards, fill up the form below. We will contact you to confirm the details and availability of your orders before sending the billing.</p>
+                                <!-- Option 2 -->
+                                <div class="option-box p-4">
+                                    <h4 class="font-bold text-purple-oven mb-2">Option 2: Advance Orders</h4>
+                                    <p class="text-sm text-gray-700">For orders for tomorrow and onwards, fill up the form below. We will contact you to confirm the details and availability of your orders before sending the billing.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-8">
-                            
-                            <!-- Customer Details -->
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Customer Details</h3>
-                                <div class="form-grid">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                        <input type="text" name="firstName" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                        <input type="text" name="lastName" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
-                                    </div>
+                        <!-- Customer Details -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Customer Details</h3>
+                            <div class="form-grid">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                                    <input type="text" name="customerName" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
-                                    <input type="tel" name="mobile" required placeholder="09XX XXX XXXX" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number * (Min. 8 digits)</label>
+                                    <input type="tel" name="contactNumber" required minlength="8" pattern="[0-9]{8,}" title="Please enter at least 8 digits" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                 </div>
+                                <!-- Instagram removed as requested -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                    <input type="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Order *</label>
+                                    <input type="date" name="orderDate" required min="${tomorrowStr}" max="${nextYearStr}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                    <p class="text-xs text-gray-500 mt-1">Select a date from tomorrow onwards.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Type -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Delivery / Pick Up</h3>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Order Type *</label>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange('Pick Up')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
+                                        <span class="ml-2 text-gray-700">Pick Up</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange('Delivery')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
+                                        <span class="ml-2 text-gray-700">Delivery</span>
+                                    </label>
                                 </div>
                             </div>
 
-                            <!-- Order Details -->
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Order Information</h3>
+                             <!-- Dynamic Location Field -->
+                            <div class="mb-4">
+                                <label id="locationLabel" class="block text-sm font-medium text-gray-700 mb-1">Store Location *</label>
                                 
-                                <!-- Order Type Selection -->
-                                <div class="mt-4 mb-4">
-                                    <span class="block text-sm font-medium text-gray-700 mb-2">Order Type</span>
-                                    <div class="flex gap-6">
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange(this.value)" class="form-radio text-purple-oven focus:ring-purple-oven h-4 w-4">
-                                            <span class="ml-2 text-gray-700">Pick Up</span>
-                                        </label>
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange(this.value)" class="form-radio text-purple-oven focus:ring-purple-oven h-4 w-4">
-                                            <span class="ml-2 text-gray-700">Delivery</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <!-- Delivery Disclaimer & Booking Checkbox -->
-                                <div id="deliveryNotice" class="hidden bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r">
-                                    <p class="text-sm text-blue-700 mb-3">
-                                        We can book a <strong>third-party rider</strong> to pick up your order <strong>on your behalf</strong>. Just check the box below and fill in the details.
+                                <!-- Pick Up Dropdown -->
+                                <select id="pickupSelect" name="pickupLocation" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                    ${locationOptions}
+                                </select>
+
+                                <!-- Delivery Notice (Hidden by default, shown above address) -->
+                                <div id="deliveryNoticeContainer" class="hidden mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+                                    <p class="font-bold text-sm text-indigo-900 mb-1">Delivery Booking Assistance</p>
+                                    <p class="text-sm text-indigo-800 mb-3">
+                                        We can book a <span class="font-bold">3rd party</span> rider to pick up your order <span class="font-bold">on your behalf</span>. Just check the box below and fill in the details.
                                     </p>
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" name="requestRiderBooking" value="Yes" class="h-4 w-4 text-blue-600 rounded focus:ring-blue-500">
-                                        <span class="ml-2 text-sm text-blue-800 font-medium">Please book a rider for me</span>
+                                        <input type="checkbox" name="deliveryConsent" id="deliveryConsent" class="text-purple-oven focus:ring-purple-oven w-4 h-4 rounded border-gray-300">
+                                        <span class="ml-2 text-sm font-bold text-indigo-900">I consent</span>
                                     </label>
                                 </div>
 
-                                <div class="form-grid">
-                                    <div id="locationFieldContainer">
-                                        <!-- Label changes based on type -->
-                                        <label class="block text-sm font-medium text-gray-700 mb-1" id="locationLabel">Store Location</label>
-                                        
-                                        <!-- Store Location Select -->
-                                        <select name="pickupLocation" id="pickupSelect" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
-                                            <option value="" disabled selected>Select Branch</option>
-                                            ${pickUpLocations.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
-                                        </select>
-                                        
-                                        <!-- Delivery Address Textarea (Hidden by default) -->
-                                        <textarea name="deliveryAddress" id="deliveryInput" rows="2" placeholder="Unit, Street, Barangay, City" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition mb-2"></textarea>
-                                        
-                                        <!-- Landmark Input (Hidden by default) -->
-                                        <input type="text" name="landmark" id="landmarkInput" placeholder="Landmark (e.g., Near Water Station)" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
-                                    </div>
-                                    
+                                <!-- Delivery Address Input (Hidden by default) -->
+                                <textarea id="deliveryInput" name="deliveryAddress" rows="2" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}" placeholder="Enter complete delivery address"></textarea>
+                                
+                                <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="hidden w-full p-2 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Time *</label>
+                                <select name="timeSlot" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                    <option value="" disabled selected>Select Time</option>
+                                    ${timeOptions}
+                                </select>
+                            </div>
+                            
+                            <!-- Gift Option (Only for Delivery) -->
+                            <div id="giftSection" class="hidden mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <label class="inline-flex items-center mb-2 cursor-pointer">
+                                    <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftFields(this)" class="text-purple-oven rounded focus:ring-purple-oven w-5 h-5">
+                                    <span class="ml-2 font-medium text-gray-700">Is this a gift?</span>
+                                </label>
+                                
+                                <div id="recipientFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 animate-fadeIn">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
-                                        <!-- Updated Input with Min and Max constraints -->
-                                        <input type="date" name="date" required 
-                                               min="${minDateStr}" 
-                                               max="${maxDateStr}"
-                                               class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
-                                        
-                                        <!-- Preferred Time (Moved inside this grid for alignment consistency) -->
-                                        <label class="block text-sm font-medium text-gray-700 mt-4 mb-1">Preferred Time</label>
-                                        <select name="time" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
-                                            <option value="" disabled selected>Select Time</option>
-                                            ${timeSlots.map(time => `<option value="${time}">${time}</option>`).join('')}
-                                        </select>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Name *</label>
+                                        <input type="text" name="recipientName" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Mobile *</label>
+                                        <input type="tel" name="recipientMobile" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Dedication Note</label>
+                                        <textarea name="dedication" rows="2" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven" placeholder="Message on card..."></textarea>
                                     </div>
                                 </div>
-                                
-                                <!-- Gift Section (Hidden by default) -->
-                                <div id="giftSection" class="hidden pt-2 border-t border-gray-100 mt-2">
-                                    <label class="inline-flex items-center cursor-pointer mb-4">
-                                        <input type="checkbox" name="isGift" value="Yes" onchange="toggleGiftFields(this)" class="h-4 w-4 text-purple-oven rounded focus:ring-purple-oven">
-                                        <span class="ml-2 text-sm font-medium text-gray-700">Is this a gift?</span>
-                                    </label>
-                                    
-                                    <div id="recipientFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200 animate-fadeIn">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Recipient Name</label>
-                                            <input type="text" name="recipientName" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Recipient Mobile Number</label>
-                                            <input type="tel" name="recipientMobile" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent">
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
+                        </div>
 
-                            <!-- Item Selection -->
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Menu Selection</h3>
-                                <!-- Render the complex Purple Oven menu -->
-                                ${renderPurpleOvenMenuSelection()}
-                            </div>
+                        <!-- Item Selection -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Select Items</h3>
+                            ${renderPurpleOvenMenuSelection()}
+                        </div>
 
-                            <!-- Submit Button & Notice -->
-                            <div class="pt-4 space-y-4">
-                                <button type="submit" class="w-full py-3 text-lg font-bold text-white bg-purple-oven rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-xl transition duration-300 transform hover:-translate-y-0.5">
-                                    Send Order
-                                </button>
-                                
-                                <!-- Important Notice -->
-                                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-                                    <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Important Notice</h5>
-                                    <p class="text-xs text-gray-600 leading-relaxed px-2">
-                                        We shall check the availability of your order prior to sending the billing. As we only 
-                                        bake in limited quantities daily, we ask for your understanding that orders may only be processed and 
-                                        set aside for you after full payment has been made and confirmed by our team.
-                                    </p>
-                                </div>
+                        <!-- Submit Button and Important Notice -->
+                        <div class="text-center pt-4 flex flex-col items-center">
+                            <button type="submit" 
+                                class="w-full sm:w-auto px-12 py-3 bg-purple-oven hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-oven mb-6">
+                                Send Order
+                            </button>
+                            
+                            <!-- Important Notice -->
+                            <div class="max-w-2xl text-center bg-gray-50 border border-gray-200 p-4 rounded-lg text-xs text-gray-600 leading-relaxed">
+                                <span class="font-bold text-gray-800">Important Notice:</span> We shall check the availability of your order prior to sending the billing. As we only bake in limited quantities daily, we ask for your understanding that orders may only be processed and set aside for you after full payment has been made and confirmed by our team.
                             </div>
-                        </form>
-                    </div>
+                        </div>
+
+                    </form>
                 </div>
             `;
         }
 
-        /** Handles the form submission, compiles the data, and opens the user's email client. */
-        function handleOrderSubmit(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
+        /** Handles form submission to generate the mailto link. */
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
             
-            // Determine Order Type and Location
-            const orderType = data.orderType;
-            let locationInfo = '';
-            let extraInfo = '';
-            
-            if (orderType === 'Pick Up') {
-                locationInfo = `Store Location: ${data.pickupLocation}`;
-            } else {
-                locationInfo = `Delivery Address: ${data.deliveryAddress}\nLandmark: ${data.landmark || 'N/A'}`;
-                
-                // Check booking request
-                if (data.requestRiderBooking === 'Yes') {
-                    extraInfo += `[✔] Please book a rider for me.\n`;
-                }
-                
-                // Check gift details
-                if (data.isGift === 'Yes') {
-                    extraInfo += `[✔] This is a GIFT.\nRecipient Name: ${data.recipientName}\nRecipient Mobile: ${data.recipientMobile}\n`;
-                }
-            }
-
-            // Compile Selected Items
-            const selectedItems = [];
+            // --- Collect Checked Items ---
+            const items = [];
             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
             
-            checkboxes.forEach(cb => {
-                const itemName = cb.value;
-                const qtyInputName = `quantity_${itemName}`;
-                const qty = formData.get(qtyInputName);
-                if (qty && parseInt(qty) > 0) {
-                    selectedItems.push(`${itemName} (Qty: ${qty})`);
-                }
-            });
-
-            if (selectedItems.length === 0) {
-                alert("Please select at least one item to order.");
+            if (checkboxes.length === 0) {
+                alert("Please select at least one item.");
                 return;
             }
 
-            // Construct Email Body
-            const subject = `Order Inquiry - ${data.lastName}, ${data.firstName}`;
-            const body = `
-Hello Purple Oven,
+            checkboxes.forEach(cb => {
+                const qtyInputId = `qty_${cb.id}`;
+                const qtyVal = document.getElementById(qtyInputId).value;
+                if (qtyVal && qtyVal > 0) {
+                    items.push(`${qtyVal} x ${cb.value}`);
+                }
+            });
 
-I would like to place an order.
+            // --- Construct Email Body ---
+            const customerName = formData.get('customerName');
+            const contactNumber = formData.get('contactNumber');
+            const orderDate = formData.get('orderDate');
+            const timeSlot = formData.get('timeSlot');
+            const orderType = formData.get('orderType'); // Pick Up or Delivery
+            
+            let locationDetails = "";
+            let recipientDetails = "";
 
---- Customer Details ---
-Name: ${data.firstName} ${data.lastName}
-Mobile: ${data.mobile}
-Email: ${data.email}
+            if (orderType === 'Pick Up') {
+                locationDetails = `Store Location: ${formData.get('pickupLocation')}`;
+            } else {
+                locationDetails = `Delivery Address: ${formData.get('deliveryAddress')}\nLandmark: ${formData.get('landmark') || 'N/A'}\nDelivery Consent: Granted`;
+                
+                // Check if gift
+                if (document.getElementById('isGift').checked) {
+                    recipientDetails = `\n\n--- RECIPIENT DETAILS (GIFT) ---\nName: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nDedication: ${formData.get('dedication') || 'N/A'}`;
+                }
+            }
 
---- Order Information ---
+            const subject = `Order - ${customerName} - ${orderDate}`;
+            
+            const body = `ORDER DETAILS
+---------------------------
+Customer Name: ${customerName}
+Contact Number: ${contactNumber}
+Date of Order: ${orderDate}
+Time: ${timeSlot}
 Order Type: ${orderType}
-${locationInfo}
-${extraInfo}
-Preferred Date: ${data.date}
-Preferred Time: ${data.time}
+${locationDetails}${recipientDetails}
 
---- Items ---
-${selectedItems.join('\n')}
+ORDER LIST
+---------------------------
+${items.join('\n')}
 
------------------------
-Please confirm my order. Thank you!
-            `.trim();
+---------------------------
+Sent via Purple Oven Web App`;
 
-            // Open Mail Client
+            // --- Open Mail Client ---
             const mailtoLink = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailtoLink;
         }
 
-        /** Main render function that updates the DOM based on the current state. */
+        /** Main render function that updates the app container based on state. */
         function render() {
             APP_ROOT.innerHTML = '';
+            window.scrollTo(0, 0);
+
             if (state.view === 'landing') {
                 APP_ROOT.innerHTML = renderLanding();
             } else if (state.view === 'menu') {
@@ -983,12 +986,9 @@ Please confirm my order. Thank you!
             } else if (state.view === 'order_form') {
                 APP_ROOT.innerHTML = renderOrderForm();
             }
-            
-            // Re-scroll to top on view change
-            window.scrollTo(0, 0);
         }
 
-        // Initial Render
+        // --- Initial Render ---
         render();
 
     </script>

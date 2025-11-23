@@ -518,6 +518,65 @@
                 }
             }
         }
+        
+        /** Switches between Pick Up and Delivery fields */
+        function handleOrderTypeChange(type) {
+            const pickupSelect = document.getElementById('pickupSelect');
+            const deliveryNotice = document.getElementById('deliveryNotice');
+            const deliveryInput = document.getElementById('deliveryInput');
+            const landmarkInput = document.getElementById('landmarkInput');
+            const locationLabel = document.getElementById('locationLabel');
+            const giftSection = document.getElementById('giftSection');
+
+            if (type === 'Pick Up') {
+                // Show Pickup
+                pickupSelect.classList.remove('hidden');
+                pickupSelect.required = true;
+                
+                // Hide Delivery Fields
+                deliveryNotice.classList.add('hidden');
+                deliveryInput.classList.add('hidden');
+                deliveryInput.required = false;
+                landmarkInput.classList.add('hidden');
+                giftSection.classList.add('hidden');
+                
+                locationLabel.innerText = 'Store Location';
+                deliveryInput.value = ''; 
+            } else {
+                // Hide Pickup
+                pickupSelect.classList.add('hidden');
+                pickupSelect.required = false;
+                
+                // Show Delivery Fields
+                deliveryNotice.classList.remove('hidden');
+                deliveryInput.classList.remove('hidden');
+                deliveryInput.required = true;
+                landmarkInput.classList.remove('hidden');
+                giftSection.classList.remove('hidden');
+                
+                locationLabel.innerText = 'Delivery Address';
+                pickupSelect.selectedIndex = 0; 
+            }
+        }
+
+        /** Toggles Gift Fields */
+        function toggleGiftFields(checkbox) {
+            const recipientFields = document.getElementById('recipientFields');
+            const nameInput = recipientFields.querySelector('input[name="recipientName"]');
+            const mobileInput = recipientFields.querySelector('input[name="recipientMobile"]');
+
+            if (checkbox.checked) {
+                recipientFields.classList.remove('hidden');
+                nameInput.required = true;
+                mobileInput.required = true;
+            } else {
+                recipientFields.classList.add('hidden');
+                nameInput.required = false;
+                mobileInput.required = false;
+                nameInput.value = '';
+                mobileInput.value = '';
+            }
+        }
 
         /** Renders the complex item selection for Purple Oven with collapsible categories, flattening certain categories. */
         function renderPurpleOvenMenuSelection() {
@@ -539,28 +598,29 @@
                     let itemName = parts[0];
                     let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : ""; // Rejoin if multiple dashes, though unexpected
 
-                    return `<div class="grid grid-cols-[auto_1fr_80px_auto] gap-3 items-center py-1 border-b border-gray-50 last:border-0">
+                    // Updated Grid Layout: Fixed widths for Qty and Unit to ensure alignment
+                    return `<div class="grid grid-cols-[20px_1fr_50px_80px] sm:grid-cols-[20px_1fr_64px_120px] gap-2 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
                                 <!-- Checkbox -->
-                                <div class="flex items-center h-full">
+                                <div class="flex items-center justify-center h-full">
                                     <input type="checkbox" id="${itemId}" name="orderItem" value="${item.name}"
                                            class="h-5 w-5 text-purple-oven rounded border-gray-300 focus:ring-purple-oven cursor-pointer"
                                            onchange="toggleQuantity(this)">
                                 </div>
                                 
                                 <!-- Item Name -->
-                                <label for="${itemId}" class="text-sm text-gray-800 font-medium cursor-pointer select-none">
+                                <label for="${itemId}" class="text-sm text-gray-800 font-medium cursor-pointer select-none leading-tight">
                                     ${itemName}
                                 </label>
 
-                                <!-- Quantity Input -->
+                                <!-- Quantity Input (Narrower) -->
                                 <div>
                                     <input type="number" name="quantity_${item.name}" placeholder="" min="1" value="" disabled
-                                        class="w-full p-1.5 border border-gray-300 rounded-md text-center text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
+                                        class="w-full p-1 border border-gray-300 rounded-md text-center text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
                                         id="qty_${itemId}">
                                 </div>
                                 
-                                <!-- Unit Display -->
-                                <div class="text-xs text-gray-500 font-medium whitespace-nowrap">
+                                <!-- Unit Display (Fixed Width for Alignment) -->
+                                <div class="text-xs text-gray-500 font-medium truncate" title="${itemUnit}">
                                     ${itemUnit}
                                 </div>
                             </div>`;
@@ -570,8 +630,8 @@
             purpleOvenMenuData.forEach((cat, catIndex) => {
                 const categoryId = `cat_${catIndex}`;
                 
-                // Use <details> for collapsible main category. Open the first one by default.
-                html += `<details class="bg-gray-50 p-0 rounded-xl mt-4 border border-gray-200 shadow-sm overflow-hidden" ${catIndex === 0 ? 'open' : ''}>
+                // Use <details> for collapsible main category. All collapsed by default now.
+                html += `<details class="bg-gray-50 p-0 rounded-xl mt-4 border border-gray-200 shadow-sm overflow-hidden">
                             <summary class="flex items-center justify-between cursor-pointer p-4 hover:bg-gray-100 rounded-xl rounded-b-none transition-colors">
                                 <h3 class="text-lg font-bold text-purple-oven">${cat.category}</h3>
                                 <svg class="w-5 h-5 text-gray-600 summary-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -598,8 +658,8 @@
                     cat.subCategories.forEach((subCat, subCatIndex) => {
                         const subCatId = `subcat_${catIndex}_${subCatIndex}`;
                         
-                        // Use nested <details> for collapsible subcategory
-                        html += `<details class="bg-white rounded-lg shadow-sm border border-gray-100 p-0" ${catIndex === 0 && subCatIndex === 0 ? 'open' : ''}>
+                        // Use nested <details> for collapsible subcategory. All collapsed by default.
+                        html += `<details class="bg-white rounded-lg shadow-sm border border-gray-100 p-0">
                                     <summary class="flex items-center justify-between cursor-pointer p-3 hover:bg-gray-50 nested-summary rounded-lg">
                                         <p class="font-semibold text-gray-700 text-sm">${subCat.name}</p>
                                         <svg class="w-4 h-4 text-gray-500 summary-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -628,6 +688,20 @@
             APP_ROOT.classList.add('justify-center');
             const brand = state.selectedBrand;
             
+            // --- Date Calculation for Min/Max attributes ---
+            const today = new Date();
+            
+            // Calculate Tomorrow (Min Date)
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDateStr = tomorrow.toISOString().split('T')[0];
+
+            // Calculate 1 Year from Tomorrow (Max Date)
+            const maxDate = new Date(tomorrow);
+            maxDate.setFullYear(maxDate.getFullYear() + 1);
+            const maxDateStr = maxDate.toISOString().split('T')[0];
+            // -----------------------------------------------
+
             return `
                 <div class="w-full max-w-2xl animate-fadeIn mb-12">
                      <div class="mb-6 flex items-center justify-between">
@@ -712,27 +786,86 @@
                             <div class="space-y-4">
                                 <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Order Information</h3>
                                 
+                                <!-- Order Type Selection -->
+                                <div class="mt-4 mb-4">
+                                    <span class="block text-sm font-medium text-gray-700 mb-2">Order Type</span>
+                                    <div class="flex gap-6">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange(this.value)" class="form-radio text-purple-oven focus:ring-purple-oven h-4 w-4">
+                                            <span class="ml-2 text-gray-700">Pick Up</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange(this.value)" class="form-radio text-purple-oven focus:ring-purple-oven h-4 w-4">
+                                            <span class="ml-2 text-gray-700">Delivery</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Delivery Disclaimer & Booking Checkbox -->
+                                <div id="deliveryNotice" class="hidden bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r">
+                                    <p class="text-sm text-blue-700 mb-3">
+                                        We can book a <strong>third-party rider</strong> to pick up your order <strong>on your behalf</strong>. Just check the box below and fill in the details.
+                                    </p>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="requestRiderBooking" value="Yes" class="h-4 w-4 text-blue-600 rounded focus:ring-blue-500">
+                                        <span class="ml-2 text-sm text-blue-800 font-medium">Please book a rider for me</span>
+                                    </label>
+                                </div>
+
                                 <div class="form-grid">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Pick-up Location</label>
-                                        <select name="location" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
+                                    <div id="locationFieldContainer">
+                                        <!-- Label changes based on type -->
+                                        <label class="block text-sm font-medium text-gray-700 mb-1" id="locationLabel">Store Location</label>
+                                        
+                                        <!-- Store Location Select -->
+                                        <select name="pickupLocation" id="pickupSelect" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
                                             <option value="" disabled selected>Select Branch</option>
                                             ${pickUpLocations.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
                                         </select>
+                                        
+                                        <!-- Delivery Address Textarea (Hidden by default) -->
+                                        <textarea name="deliveryAddress" id="deliveryInput" rows="2" placeholder="Unit, Street, Barangay, City" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition mb-2"></textarea>
+                                        
+                                        <!-- Landmark Input (Hidden by default) -->
+                                        <input type="text" name="landmark" id="landmarkInput" placeholder="Landmark (e.g., Near Water Station)" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
                                     </div>
+                                    
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Pick-up Date</label>
-                                        <input type="date" name="date" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Date</label>
+                                        <!-- Updated Input with Min and Max constraints -->
+                                        <input type="date" name="date" required 
+                                               min="${minDateStr}" 
+                                               max="${maxDateStr}"
+                                               class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition">
+                                        
+                                        <!-- Preferred Time (Moved inside this grid for alignment consistency) -->
+                                        <label class="block text-sm font-medium text-gray-700 mt-4 mb-1">Preferred Time</label>
+                                        <select name="time" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
+                                            <option value="" disabled selected>Select Time</option>
+                                            ${timeSlots.map(time => `<option value="${time}">${time}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Gift Section (Hidden by default) -->
+                                <div id="giftSection" class="hidden pt-2 border-t border-gray-100 mt-2">
+                                    <label class="inline-flex items-center cursor-pointer mb-4">
+                                        <input type="checkbox" name="isGift" value="Yes" onchange="toggleGiftFields(this)" class="h-4 w-4 text-purple-oven rounded focus:ring-purple-oven">
+                                        <span class="ml-2 text-sm font-medium text-gray-700">Is this a gift?</span>
+                                    </label>
+                                    
+                                    <div id="recipientFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200 animate-fadeIn">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Recipient Name</label>
+                                            <input type="text" name="recipientName" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Recipient Mobile Number</label>
+                                            <input type="tel" name="recipientMobile" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent">
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Pick-up Time</label>
-                                    <select name="time" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-oven focus:border-transparent transition bg-white">
-                                        <option value="" disabled selected>Select Time</option>
-                                        ${timeSlots.map(time => `<option value="${time}">${time}</option>`).join('')}
-                                    </select>
-                                </div>
                             </div>
 
                             <!-- Item Selection -->
@@ -770,6 +903,27 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             
+            // Determine Order Type and Location
+            const orderType = data.orderType;
+            let locationInfo = '';
+            let extraInfo = '';
+            
+            if (orderType === 'Pick Up') {
+                locationInfo = `Store Location: ${data.pickupLocation}`;
+            } else {
+                locationInfo = `Delivery Address: ${data.deliveryAddress}\nLandmark: ${data.landmark || 'N/A'}`;
+                
+                // Check booking request
+                if (data.requestRiderBooking === 'Yes') {
+                    extraInfo += `[✔] Please book a rider for me.\n`;
+                }
+                
+                // Check gift details
+                if (data.isGift === 'Yes') {
+                    extraInfo += `[✔] This is a GIFT.\nRecipient Name: ${data.recipientName}\nRecipient Mobile: ${data.recipientMobile}\n`;
+                }
+            }
+
             // Compile Selected Items
             const selectedItems = [];
             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
@@ -801,9 +955,11 @@ Mobile: ${data.mobile}
 Email: ${data.email}
 
 --- Order Information ---
-Pick-up Location: ${data.location}
-Date: ${data.date}
-Time: ${data.time}
+Order Type: ${orderType}
+${locationInfo}
+${extraInfo}
+Preferred Date: ${data.date}
+Preferred Time: ${data.time}
 
 --- Items ---
 ${selectedItems.join('\n')}

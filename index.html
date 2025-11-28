@@ -679,24 +679,57 @@
             localStorage.setItem('po_order_seq', seq + 1);
             localStorage.setItem('po_last_order_year', year);
         }
+        
+        /** Helper to check if any items have been selected with a quantity > 0 */
+        function checkItemSelection() {
+             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
+             let selectedCount = 0;
+
+             checkboxes.forEach(cb => {
+                const qtyInputId = `qty_${cb.id}`;
+                const qtyVal = parseInt(document.getElementById(qtyInputId).value || '0');
+                if (qtyVal > 0) {
+                    selectedCount++;
+                }
+            });
+            return selectedCount;
+        }
+
 
         /** Validates form and shows confirmation notice before final submit */
         function validateAndShowNotice() {
             const form = document.getElementById('orderForm');
             
-            if (form.checkValidity()) {
-                // If form is valid, hide Send Order button and show Confirmation Section
-                document.getElementById('sendOrderBtnContainer').classList.add('hidden');
-                document.getElementById('confirmationSection').classList.remove('hidden');
-                
-                // Scroll to bottom to show the notice
-                setTimeout(() => {
-                   document.getElementById('confirmationSection').scrollIntoView({ behavior: 'smooth' }); 
-                }, 100);
-            } else {
+            // 1. Check browser required field validity
+            if (!form.checkValidity()) {
                 // Trigger browser's default validation UI
                 form.reportValidity();
+                return;
             }
+            
+            // 2. Check custom logic: Item selection
+            if (checkItemSelection() === 0) {
+                // IMPORTANT: Use custom modal UI instead of alert()
+                const errorMessage = document.getElementById('itemErrorContainer');
+                errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+                    <strong class="font-bold">Missing Items!</strong>
+                    <span class="block sm:inline">Please select at least one item and enter a quantity greater than zero.</span>
+                </div>`;
+                document.getElementById('itemSelectionTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Stop if items are missing
+            } else {
+                 // Clear any previous error
+                document.getElementById('itemErrorContainer').innerHTML = '';
+            }
+            
+            // If valid, hide Send Order button and show Confirmation Section
+            document.getElementById('sendOrderBtnContainer').classList.add('hidden');
+            document.getElementById('confirmationSection').classList.remove('hidden');
+            
+            // Scroll to bottom to show the notice
+            setTimeout(() => {
+               document.getElementById('confirmationSection').scrollIntoView({ behavior: 'smooth' }); 
+            }, 100);
         }
 
         /** Renders the complex item selection for Purple Oven with collapsible categories, flattening certain categories. */
@@ -705,6 +738,9 @@
             
             // Add instruction text
             html += `<p class="text-sm text-gray-500 mb-4">Check the items you want to order and input the desired quantity.</p>`;
+            
+            // Container for item selection error message
+            html += `<div id="itemErrorContainer" class="mb-4"></div>`;
 
             // Categories where the subcategory collapsible wrapper should be skipped/flattened.
             const categoriesToFlatten = ["Bars", "Cookies", "Loaves", "Snack Packs", "Reusable Bag"];
@@ -719,8 +755,8 @@
                     let itemName = parts[0];
                     let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : ""; // Rejoin if multiple dashes, though unexpected
 
-                    // Updated Grid Layout: Narrower Quantity, Fixed Unit Width
-                    return `<div class="grid grid-cols-[20px_1fr_40px_100px] sm:grid-cols-[20px_1fr_48px_140px] gap-3 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
+                    // Updated Grid Layout for right flush and responsive columns
+                    return `<div class="grid grid-cols-[20px_1fr_48px_100px] sm:grid-cols-[20px_1fr_48px_140px] gap-3 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
                                 <!-- Checkbox -->
                                 <div class="flex items-center justify-center h-full">
                                     <input type="checkbox" id="${itemId}" name="orderItem" value="${item.name}"
@@ -733,15 +769,15 @@
                                     ${itemName}
                                 </label>
 
-                                <!-- Quantity Input (Narrower) -->
+                                <!-- Quantity Input (Align right) -->
                                 <div>
                                     <input type="number" name="quantity_${item.name}" placeholder="" min="1" value="" disabled
-                                           class="w-full p-1 border border-gray-300 rounded-md text-center text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
+                                           class="w-full p-1 border border-gray-300 rounded-md text-right text-sm focus:ring-purple-oven focus:border-purple-oven disabled:bg-gray-100 disabled:text-gray-400"
                                            id="qty_${itemId}">
                                 </div>
                                 
-                                <!-- Unit Display (Fixed Width for Alignment) -->
-                                <div class="text-xs text-gray-500 font-medium truncate pl-1" title="${itemUnit}">
+                                <!-- Unit Display (Align right) -->
+                                <div class="text-xs text-gray-500 font-medium truncate text-right" title="${itemUnit}">
                                     ${itemUnit}
                                 </div>
                             </div>`;
@@ -820,6 +856,8 @@
             // Calculate Date Min and Max
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
+            // Ensure time is reset for proper date comparison
+            tomorrow.setHours(0, 0, 0, 0); 
             const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
             // Limit Date to Dec 31 of current year
@@ -977,7 +1015,7 @@
 
                         <!-- Item Selection -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Select Items</h3>
+                            <h3 id="itemSelectionTitle" class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Select Items</h3>
                             ${renderPurpleOvenMenuSelection()}
                         </div>
 
@@ -1050,14 +1088,17 @@
         /** Handles form submission to generate the mailto link. */
         function handleFormSubmit(event) {
             event.preventDefault();
-            const formData = new FormData(event.target);
+            const form = event.target;
+            const formData = new FormData(form);
             
             // --- Collect Checked Items ---
             const items = [];
             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
             
-            if (checkboxes.length === 0) {
-                alert("Please select at least one item.");
+            // Re-check item selection just in case, though validateAndShowNotice should handle it
+            if (checkItemSelection() === 0) {
+                 // Should not happen if validation worked, but safe guard.
+                alert("Error: No items selected or quantity set.");
                 return;
             }
 
@@ -1089,7 +1130,7 @@
                 locationDetails = `Delivery Address: ${formData.get('deliveryAddress')}\nLandmark: ${formData.get('landmark') || 'N/A'}`;
                 
                 // Check if gift
-                if (document.getElementById('isGift').checked) {
+                if (document.getElementById('isGift') && document.getElementById('isGift').checked) {
                     recipientDetails = `\n\n--- RECIPIENT DETAILS (GIFT) ---\nName: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nDedication: ${formData.get('dedication') || 'N/A'}`;
                 }
             }
@@ -1118,17 +1159,13 @@ Sent via Purple Oven Web App`;
             window.location.href = mailtoLink;
             
             // --- SHOW SUCCESS FEEDBACK ---
-            // Hide the confirmation section and show the success message
-            document.getElementById('confirmationSection').classList.add('hidden');
-            // Also hide the form content wrapper if we want, or just append. 
-            // Better UX: Hide everything else in the form and show the success card.
-            
-            // Let's hide the office hours and customer details to clean up the screen
-            const noticeBox = document.querySelector('.notice-box');
-            if(noticeBox) noticeBox.classList.add('hidden');
-            
-            const customerDetails = document.querySelectorAll('.mb-8'); // Hides customer details, order type, etc
-            customerDetails.forEach(el => el.classList.add('hidden'));
+            // Hide all other elements in the form and show the success message
+            const formChildren = Array.from(form.children);
+            formChildren.forEach(child => {
+                if(child.id !== 'successSection') {
+                    child.classList.add('hidden');
+                }
+            });
 
             document.getElementById('successSection').classList.remove('hidden');
             document.getElementById('successSection').scrollIntoView({ behavior: 'smooth' });
@@ -1145,6 +1182,8 @@ Sent via Purple Oven Web App`;
                 APP_ROOT.innerHTML = renderMenu(state.selectedBrand);
             } else if (state.view === 'order_form') {
                 APP_ROOT.innerHTML = renderOrderForm();
+                // Initialize default order type state
+                handleOrderTypeChange('Pick Up');
             }
         }
 

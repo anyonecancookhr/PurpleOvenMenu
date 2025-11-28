@@ -18,7 +18,6 @@
             flex-direction: column;
         }
         .main-content {
-            /* flex-grow: 1 ensures the content area takes up remaining space */
             flex-grow: 1;
         }
         .text-purple-oven {
@@ -27,7 +26,7 @@
         .bg-purple-oven {
             background-color: var(--purple-oven);
         }
-        /* Custom scrollbar for better look */
+        /* Custom scrollbar */
         .menu-scroll::-webkit-scrollbar {
             width: 8px;
         }
@@ -35,7 +34,7 @@
             background-color: #e0e0e0;
             border-radius: 4px;
         }
-        /* Ensure the form containers are responsive */
+        /* Responsive form grid */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -46,19 +45,13 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
-        /* Fade in animation for view changes */
+        /* Animations */
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0;
-            transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0);
-            }
-        }
-        .card-description {
-            /* Enforce specific height for consistent card size */
-            min-height: 5rem; 
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .location-link {
             transition: all 0.15s ease-in-out;
@@ -76,23 +69,17 @@
         .summary-icon {
             transition: transform 0.3s ease;
         }
-        /* Styling for nested collapsible summary */
         .nested-summary {
-            padding-left: 0.75rem; /* Add indentation */
+            padding-left: 0.75rem;
         }
-        /* Phone button hover effect */
-        .phone-btn:hover {
-            background-color: #EEF2FF;
-            border-color: #5D3FD3;
-        }
-        /* Custom styles for the Notice Box */
+        /* Custom Notice Box */
         .notice-box {
-            background-color: #FAF5FF; /* Very light purple */
+            background-color: #FAF5FF;
             border: 1px solid #E9D5FF;
             border-radius: 0.75rem;
         }
         .option-box {
-            background-color: #F3E8FF; /* Slightly darker light purple */
+            background-color: #F3E8FF;
             border-radius: 0.5rem;
         }
     </style>
@@ -104,10 +91,8 @@
 
     <footer class="bg-gray-100 py-10 px-4 w-full border-t border-gray-200">
         <div class="max-w-6xl mx-auto">
-            <!-- Footer Container: Stack on mobile, Side-by-Side on Desktop -->
             <div class="flex flex-col md:flex-row gap-10">
-                
-                <!-- Left Side: Locations (Wider) -->
+                <!-- Left Side: Locations -->
                 <div class="md:w-2/3">
                     <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,7 +102,6 @@
                         Locations & Hours
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 text-sm">
-                        <!-- Metro Manila Locations -->
                         <div>
                             <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Metro Manila 8AM – 9PM</p>
                             <div class="space-y-3">
@@ -156,8 +140,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Laguna Locations -->
                         <div>
                             <p class="font-bold text-gray-800 mb-2 border-b border-gray-300 pb-1">Laguna 9AM – 9PM</p>
                             <div class="space-y-3">
@@ -169,7 +151,7 @@
                     </div>
                 </div>
 
-                <!-- Right Side: Contact (Narrower, more prominent) -->
+                <!-- Right Side: Contact -->
                 <div class="md:w-1/3 md:border-l md:border-gray-300 md:pl-10">
                     <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -211,19 +193,15 @@
     <script>
         // --- Global State and Constants ---
         const APP_ROOT = document.getElementById('app');
-        // IMPORTANT: All order inquiries will be sent to this processing email address.
         const ORDER_EMAIL = "orderonline@purpleoven.com.ph"; 
-        
-        // Logo and Menu File Paths
         const PO_LOGO_URL = "purple_oven.png";
         
         let state = {
-            view: 'landing', // 'landing', 'menu', 'order_form'
-            selectedBrand: 'PurpleOven' // Defaulting to PurpleOven as it is the only brand
+            view: 'landing', 
+            selectedBrand: 'PurpleOven'
         };
 
-        // --- PURPLE OVEN MENU DATA (COMPREHENSIVE) ---
-        // Note: All units converted to lowercase as requested (whole, pc, box of 12)
+        // --- MENU DATA ---
         const purpleOvenMenuData = [
             {
                 category: "Cakes",
@@ -297,9 +275,8 @@
                 category: "Bars",
                 subCategories: [
                     {
-                        name: "", /* Subheader removed */
+                        name: "",
                         items: [
-                            // Paired Half then Whole, units changed to 16pc/32pc, Names updated with Half/Whole
                             { name: "Mango Bars Half - 16pc" },
                             { name: "Mango Bars Whole - 32pc" },
                             { name: "Lemon Bars Half - 16pc" },
@@ -320,9 +297,8 @@
                 category: "Cookies",
                 subCategories: [
                     {
-                        name: "", /* Subheader removed */
+                        name: "",
                         items: [
-                            // Rearranged as requested
                             { name: "Chocolate Macadamia Cookie - pc" },
                             { name: "White Chocolate Cashew Cookie - pc" },
                             { name: "Chocolate Dipped Cookie - pc" },
@@ -339,7 +315,7 @@
                 category: "Loaves",
                 subCategories: [
                     {
-                        name: "", /* Subheader removed */
+                        name: "",
                         items: [
                             { name: "Banana Loaf - loaf" },
                             { name: "Carrot Walnut Loaf - loaf" },
@@ -354,7 +330,7 @@
                 category: "Snack Packs",
                 subCategories: [
                     {
-                        name: "", /* Subheader removed */
+                        name: "",
                         items: [
                             { name: "Chocolate Carousel - pack" },
                             { name: "Purple Crumble - pack" }
@@ -364,9 +340,6 @@
             },
             {
                 category: "Bread and Pastries",
-                // Added note for this category via UI logic or explicit item?
-                // Request: "Under the Bread and Pastries Title and before the Quiche... add small text"
-                // Handled in rendering logic below by checking category name.
                 subCategories: [
                     {
                         name: "Quiches",
@@ -428,7 +401,7 @@
                 category: "Reusable Bag",
                 subCategories: [
                     {
-                        name: "", /* Subheader removed */
+                        name: "",
                         items: [
                             { name: "Large Bag - pc" },
                             { name: "Small Bag - pc" }
@@ -441,15 +414,14 @@
         const brands = {
             PurpleOven: {
                 theme: 'purple-white',
-                description: `At Purple Oven, we bake all day everyday with real eggs, cream and butter. And we serve them while they’re at their best. It makes us happy to have you bring home the freshest and finest products we can offer.`,
+                description: ``,
                 logo: PO_LOGO_URL,
                 menuFiles: Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`)
             }
         };
-        // Time slots adjusted for new 9 AM start for Order Processing
-        const timeSlots = Array.from({ length: 11 }, (_, i) => `${(i + 9) % 12 === 0 ? 12 : (i + 9) % 12} ${i + 9 < 12 ? 'AM' : 'PM'}`).slice(0, 11); // 9 AM to 7 PM for pick up
         
-        // Updated Locations List
+        const timeSlots = Array.from({ length: 11 }, (_, i) => `${(i + 9) % 12 === 0 ? 12 : (i + 9) % 12} ${i + 9 < 12 ? 'AM' : 'PM'}`).slice(0, 11); 
+        
         const pickUpLocations = [
             'Pasig - Portico',
             'Makati - San Antonio Plaza Arcade',
@@ -462,41 +434,34 @@
             'Laguna - Santa Rosa'
         ];
         
-        // --- View Navigation Functions ---
+        // --- View Navigation ---
 
-        /** Sets the state to the landing page and triggers a render. */
         function showLanding() {
             state.view = 'landing';
             state.selectedBrand = 'PurpleOven';
             render();
         }
 
-        /** Sets the state to a specific menu view and triggers a render. */
         function showMenu(brand) {
             state.view = 'menu';
             state.selectedBrand = brand;
             render();
         }
 
-        /** Sets the state to the advance order form and triggers a render. */
         function showOrder() {
             state.view = 'order_form';
             render();
         }
 
-        // --- HTML Rendering Functions ---
+        // --- HTML Rendering ---
 
-        /** Renders the Landing Page content. */
         function renderLanding() {
             APP_ROOT.classList.add('justify-center');
-            // Updated text with specific line breaks using <br>
             return `
                 <div class="text-center animate-fadeIn w-full max-w-2xl flex flex-col items-center">
-                    <!-- Purple Oven Logo on Top -->
                     <img src="${PO_LOGO_URL}" onerror="this.src='https://placehold.co/300x100/5D3FD3/fff?text=Purple+Oven'"
                         alt="Purple Oven Logo" class="mx-auto mb-6 h-auto max-h-[200px] w-auto object-contain">
                     
-                    <!-- Updated Description Text with Breaks -->
                     <p class="text-xl text-gray-600 mb-10 max-w-xl leading-relaxed">
                          At Purple Oven, we bake<br>
                          all day everyday with<br>
@@ -509,7 +474,6 @@
                          products we can offer.
                     </p>
 
-                    <!-- See Our Menu (Button) -->
                     <button onclick="showMenu('PurpleOven')"
                             class="px-10 py-4 text-lg font-semibold text-white rounded-full transition duration-300 shadow-lg bg-purple-oven hover:bg-indigo-700 transform hover:scale-105">
                         See Our Menu
@@ -518,15 +482,12 @@
             `;
         }
 
-        /** Renders the Menu View content for the selected brand, using an array of image files for the menu. */
         function renderMenu(brand) {
             APP_ROOT.classList.remove('justify-center');
             const data = brands[brand];
-            const isPurple = true; // Always true now
             const themeClass = 'text-purple-oven border-purple-oven';
             const buttonClass = 'bg-purple-oven hover:bg-indigo-700';
 
-            // Menu rendering logic updated
             const menuContent = `
                 <div class="flex justify-center items-center mb-6">
                     <img src="${data.logo}"
@@ -547,7 +508,6 @@
                     </div>
                 </div>
                 
-            
                 <div class="mt-8 flex justify-between items-center">
                     <button onclick="showLanding()" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-150 rounded-md">
                         ← Back to Home
@@ -569,7 +529,6 @@
         
         // --- Form Functions ---
 
-        /** Toggles the quantity input based on the checkbox state. */
         function toggleQuantity(checkbox) {
             const qtyInputId = `qty_${checkbox.id}`;
             const qtyInput = document.getElementById(qtyInputId);
@@ -577,31 +536,26 @@
                 qtyInput.disabled = !checkbox.checked;
                 if (checkbox.checked) {
                     qtyInput.focus();
-                    qtyInput.value = '1'; // Default to 1 when checked
+                    qtyInput.value = '1';
                 } else {
-                    qtyInput.value = ''; // Clear value when unchecked
+                    qtyInput.value = '';
                 }
             }
         }
         
-        /** Switches between Pick Up and Delivery fields */
         function handleOrderTypeChange(type) {
             const pickupSelect = document.getElementById('pickupSelect');
             const deliveryNoticeContainer = document.getElementById('deliveryNoticeContainer');
-            // const deliveryConsent = document.getElementById('deliveryConsent'); // Removed
             const deliveryInput = document.getElementById('deliveryInput');
             const landmarkInput = document.getElementById('landmarkInput');
             const locationLabel = document.getElementById('locationLabel');
             const giftSection = document.getElementById('giftSection');
 
             if (type === 'Pick Up') {
-                // Show Pickup
                 pickupSelect.classList.remove('hidden');
                 pickupSelect.required = true;
                 
-                // Hide Delivery Fields
                 deliveryNoticeContainer.classList.add('hidden');
-                // deliveryConsent.required = false; // Removed
                 
                 deliveryInput.classList.add('hidden');
                 deliveryInput.required = false;
@@ -611,13 +565,10 @@
                 locationLabel.innerText = 'Store Location *';
                 deliveryInput.value = ''; 
             } else {
-                // Hide Pickup
                 pickupSelect.classList.add('hidden');
                 pickupSelect.required = false;
                 
-                // Show Delivery Fields
                 deliveryNoticeContainer.classList.remove('hidden');
-                // deliveryConsent.required = true; // Removed
                 
                 deliveryInput.classList.remove('hidden');
                 deliveryInput.required = true;
@@ -629,7 +580,6 @@
             }
         }
 
-        /** Toggles Gift Fields */
         function toggleGiftFields(checkbox) {
             const recipientFields = document.getElementById('recipientFields');
             const nameInput = recipientFields.querySelector('input[name="recipientName"]');
@@ -648,16 +598,15 @@
             }
         }
 
-        /** Order ID Logic: Uses Local Storage to simulate sequential numbering */
         function getNextOrderNumber() {
             const now = new Date();
             const currentYear = now.getFullYear();
             
-            // Retrieve stored values
+            // NOTE: Using localStorage for order sequence is for demonstration only. 
+            // In a real application, this would be managed by a server/database (like Firestore).
             let storedYear = localStorage.getItem('po_last_order_year');
             let orderSeq = parseInt(localStorage.getItem('po_order_seq') || '1');
 
-            // Reset if year has changed (e.g., "reset back to 1 during january")
             if (storedYear != currentYear) {
                 orderSeq = 1;
             }
@@ -673,14 +622,12 @@
             };
         }
 
-        /** Increments the order sequence in Local Storage after successful submit */
         function incrementOrderNumber() {
             const { seq, year } = getNextOrderNumber();
             localStorage.setItem('po_order_seq', seq + 1);
             localStorage.setItem('po_last_order_year', year);
         }
         
-        /** Helper to check if any items have been selected with a quantity > 0 */
         function checkItemSelection() {
              const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
              let selectedCount = 0;
@@ -695,68 +642,25 @@
             return selectedCount;
         }
 
-
-        /** Validates form and shows confirmation notice before final submit */
-        function validateAndShowNotice() {
-            const form = document.getElementById('orderForm');
-            
-            // 1. Check browser required field validity
-            if (!form.checkValidity()) {
-                // Trigger browser's default validation UI
-                form.reportValidity();
-                return;
-            }
-            
-            // 2. Check custom logic: Item selection
-            if (checkItemSelection() === 0) {
-                // IMPORTANT: Use custom modal UI instead of alert()
-                const errorMessage = document.getElementById('itemErrorContainer');
-                errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
-                    <strong class="font-bold">Missing Items!</strong>
-                    <span class="block sm:inline">Please select at least one item and enter a quantity greater than zero.</span>
-                </div>`;
-                document.getElementById('itemSelectionTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return; // Stop if items are missing
-            } else {
-                 // Clear any previous error
-                document.getElementById('itemErrorContainer').innerHTML = '';
-            }
-            
-            // If valid, hide Send Order button and show Confirmation Section
-            document.getElementById('sendOrderBtnContainer').classList.add('hidden');
-            document.getElementById('confirmationSection').classList.remove('hidden');
-            
-            // Scroll to bottom to show the notice
-            setTimeout(() => {
-               document.getElementById('confirmationSection').scrollIntoView({ behavior: 'smooth' }); 
-            }, 100);
-        }
-
-        /** Renders the complex item selection for Purple Oven with collapsible categories, flattening certain categories. */
         function renderPurpleOvenMenuSelection() {
             let html = '';
-            
-            // Add instruction text
             html += `<p class="text-sm text-gray-500 mb-4">Check the items you want to order and input the desired quantity.</p>`;
-            
-            // Container for item selection error message
             html += `<div id="itemErrorContainer" class="mb-4"></div>`;
 
-            // Categories where the subcategory collapsible wrapper should be skipped/flattened.
             const categoriesToFlatten = ["Bars", "Cookies", "Loaves", "Snack Packs", "Reusable Bag"];
 
-            // Helper function to render the individual item fields
             const renderItemFields = (items, catIndex, subCatIndex) => {
                 return items.map((item, itemIndex) => {
                     const itemId = `item_${catIndex}_${subCatIndex}_${itemIndex}`;
                     
-                    // Logic to split Name and Unit
                     const parts = item.name.split(" - ");
                     let itemName = parts[0];
-                    let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : ""; // Rejoin if multiple dashes, though unexpected
+                    let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : "";
 
-                    // Updated Grid Layout for right flush and responsive columns
-                    return `<div class="grid grid-cols-[20px_1fr_48px_100px] sm:grid-cols-[20px_1fr_48px_140px] gap-3 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
+                    // Updated Grid Layout: Item Name takes available space, Qty and Unit are flushed right
+                    // Responsive: 
+                    // Mobile: Checkbox(20px) | Name(auto) | Qty(48px) | Unit(70px)
+                    return `<div class="grid grid-cols-[20px_1fr_48px_70px] sm:grid-cols-[20px_1fr_48px_100px] gap-2 sm:gap-4 items-center py-2 border-b border-gray-50 last:border-0">
                                 <!-- Checkbox -->
                                 <div class="flex items-center justify-center h-full">
                                     <input type="checkbox" id="${itemId}" name="orderItem" value="${item.name}"
@@ -765,7 +669,7 @@
                                 </div>
                                 
                                 <!-- Item Name -->
-                                <label for="${itemId}" class="text-sm text-gray-800 font-medium cursor-pointer select-none leading-tight">
+                                <label for="${itemId}" class="text-sm text-gray-800 font-medium cursor-pointer select-none leading-tight break-words">
                                     ${itemName}
                                 </label>
 
@@ -787,7 +691,6 @@
             purpleOvenMenuData.forEach((cat, catIndex) => {
                 const categoryId = `cat_${catIndex}`;
                 
-                // Use <details> for collapsible main category. All collapsed by default now.
                 html += `<details class="bg-gray-50 p-0 rounded-xl mt-4 border border-gray-200 shadow-sm overflow-hidden">
                             <summary class="flex items-center justify-between cursor-pointer p-4 hover:bg-gray-100 rounded-xl rounded-b-none transition-colors">
                                 <h3 class="text-lg font-bold text-purple-oven">${cat.category}</h3>
@@ -796,20 +699,15 @@
                                 </svg>
                             </summary>
 
-                            <div class="px-4 pb-4 space-y-4 pt-2">`; // Content for the main category (Div container)
+                            <div class="px-4 pb-4 space-y-4 pt-2">`; 
 
-                // Check for special note in Bread and Pastries
                 if (cat.category === "Bread and Pastries") {
                     html += `<p class="text-xs text-gray-500 italic mb-3 ml-2">Orders of 6 to 7 pieces will be packed in a box.</p>`;
                 }
 
-                // Check if the current category should have its items listed directly (flattened)
                 if (categoriesToFlatten.includes(cat.category)) {
-                    // FLATTENED: We assume only one subcategory exists and skip the collapsible wrapper
                     if (cat.subCategories.length > 0) {
-                        const subCat = cat.subCategories[0]; // Get the first subcategory
-                        
-                        // Use a simple non-collapsible container for items
+                        const subCat = cat.subCategories[0];
                         html += `
                             <div class="space-y-1">
                                 ${renderItemFields(subCat.items, catIndex, 0)}
@@ -817,7 +715,6 @@
                         `;
                     }
                 } else {
-                    // NESTED: Category has multiple subcategories, so use nested <details>
                     cat.subCategories.forEach((subCat, subCatIndex) => {
                         const subCategoryId = `subcat_${catIndex}_${subCatIndex}`;
                         html += `<details class="bg-white p-0 rounded-lg border border-gray-200 shadow-sm overflow-hidden">
@@ -833,38 +730,35 @@
                                 </details>`;
                     });
                 }
-                
-                // Close the main category content div and details tag
                 html += `</div></details>`;
             });
 
             return html;
         }
 
-        /** Renders the Order Form View. */
         function renderOrderForm() {
             APP_ROOT.classList.remove('justify-center');
             const themeClass = 'bg-purple-oven text-white';
             const borderClass = 'focus:border-purple-oven focus:ring-purple-oven';
             
-            // Build Time Options
             const timeOptions = timeSlots.map(t => `<option value="${t}">${t}</option>`).join('');
-            
-            // Build Location Options for Pick Up
             const locationOptions = pickUpLocations.map(l => `<option value="${l}">${l}</option>`).join('');
 
-            // Calculate Date Min and Max
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            // Ensure time is reset for proper date comparison
-            tomorrow.setHours(0, 0, 0, 0); 
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            // DATE FIX: Use explicit YYYY-MM-DD construction to avoid timezone issues
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            
+            // Format to YYYY-MM-DD using local time
+            const year = tomorrow.getFullYear();
+            const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            const day = String(tomorrow.getDate()).padStart(2, '0');
+            const tomorrowStr = `${year}-${month}-${day}`;
 
             // Limit Date to Dec 31 of current year
-            const currentYear = tomorrow.getFullYear();
+            const currentYear = year;
             const maxDateStr = `${currentYear}-12-31`;
 
-            // Get Order Number
             const orderData = getNextOrderNumber();
 
             return `
@@ -873,182 +767,154 @@
                         <button onclick="showLanding()" class="text-sm text-gray-600 hover:text-purple-oven transition">
                             ← Back to Home
                         </button>
-                        <!-- Title Changed to How to Order -->
                         <h2 class="text-2xl font-bold text-gray-800">How to Order</h2>
-                        <div class="w-20"></div> <!-- Spacer for centering -->
+                        <div class="w-20"></div> 
                     </div>
 
                     <form id="orderForm" onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
                         
-                        <!-- Office Hours & Options Section (New) -->
-                        <div class="mb-10 notice-box p-6">
-                            <h3 class="text-lg font-bold text-gray-900 mb-2">Office Hours</h3>
-                            <!-- Updated Office Hours Text -->
-                            <p class="text-sm text-gray-700 mb-6">Our team is available to assist you with, receive, and facilitate your order daily from 9AM to 6PM.</p>
+                        <!-- Form Content (Hidden on Success) -->
+                        <div id="formContent">
+                            <div class="mb-10 notice-box p-6">
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">Office Hours</h3>
+                                <p class="text-sm text-gray-700 mb-6">Our team is available to assist you with, receive, and facilitate your order daily from 9AM to 6PM.</p>
 
-                            <div class="space-y-4">
-                                <!-- Option 1 -->
-                                <div class="option-box p-4">
-                                    <h4 class="font-bold text-purple-oven mb-2">Option 1: Call Us</h4>
-                                    <!-- Updated Option 1 Text -->
-                                    <p class="text-sm text-gray-700 mb-3">For orders today, please give us a call.</p>
-                                    <div class="text-sm font-medium text-gray-800 space-y-2">
-                                        <p>Landline: 
-                                            <a href="tel:+63286314221" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
-                                                +632 8631 4221
-                                            </a>
-                                        </p>
-                                        <p>Mobile / Viber: 
-                                            <a href="tel:+639177103227" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
-                                                +63917 710 3227
-                                            </a>
-                                        </p>
+                                <div class="space-y-4">
+                                    <div class="option-box p-4">
+                                        <h4 class="font-bold text-purple-oven mb-2">Option 1: Call Us</h4>
+                                        <p class="text-sm text-gray-700 mb-3">For orders today, please give us a call.</p>
+                                        <div class="text-sm font-medium text-gray-800 space-y-2">
+                                            <p>Landline: 
+                                                <a href="tel:+63286314221" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
+                                                    +632 8631 4221
+                                                </a>
+                                            </p>
+                                            <p>Mobile / Viber: 
+                                                <a href="tel:+639177103227" class="text-purple-oven font-bold underline decoration-2 hover:text-indigo-800 transition-colors ml-1">
+                                                    +63917 710 3227
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="option-box p-4">
+                                        <h4 class="font-bold text-purple-oven mb-2">Option 2: Order Online</h4>
+                                        <p class="text-sm text-gray-700">For orders tomorrow and onwards, please provide us with the details below. We will contact you to confirm the availability of your order before sending the bill.</p>
                                     </div>
                                 </div>
-
-                                <!-- Option 2 -->
-                                <div class="option-box p-4">
-                                    <!-- Title Changed -->
-                                    <h4 class="font-bold text-purple-oven mb-2">Option 2: Order Online</h4>
-                                    <!-- Text Changed -->
-                                    <p class="text-sm text-gray-700">For orders tomorrow and onwards, please provide us with the details below. We will contact you to confirm the availability of your order before sending the bill.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Customer Details -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Customer Details</h3>
-                            <div class="form-grid">
-                                <!-- Hidden Order Reference Input -->
-                                <input type="hidden" name="orderId" value="${orderData.fullId}">
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                                    <input type="text" name="customerName" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                </div>
-                                <div>
-                                    <!-- Title Changed -->
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number * (Min. 8 digits)</label>
-                                    <input type="tel" name="contactNumber" required minlength="8" pattern="[0-9]{8,}" title="Please enter at least 8 digits" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Order *</label>
-                                    <input type="date" name="orderDate" required min="${tomorrowStr}" max="${maxDateStr}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                    <p class="text-xs text-gray-500 mt-1">Select a date from tomorrow onwards (until Dec 31).</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Type -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Delivery / Pick Up</h3>
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Order Type *</label>
-                                <div class="flex space-x-4">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange('Pick Up')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
-                                        <span class="ml-2 text-gray-700">Pick Up</span>
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange('Delivery')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
-                                        <span class="ml-2 text-gray-700">Delivery</span>
-                                    </label>
-                                </div>
                             </div>
 
-                             <!-- Dynamic Location Field -->
-                            <div class="mb-4">
-                                <label id="locationLabel" class="block text-sm font-medium text-gray-700 mb-1">Store Location *</label>
-                                
-                                <!-- Pick Up Dropdown -->
-                                <select id="pickupSelect" name="pickupLocation" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                    ${locationOptions}
-                                </select>
-
-                                <!-- Delivery Notice (Text Changed, Checkbox Removed) -->
-                                <div id="deliveryNoticeContainer" class="hidden mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-4">
-                                    <p class="text-sm text-indigo-800">
-                                        We can arrange for delivery to your home, within Metro Manila. Please check the box below and provide the details.
-                                    </p>
-                                    <!-- Consent checkbox removed as requested -->
-                                </div>
-
-                                <!-- Delivery Address Input (Moved Below Notice Box) -->
-                                <textarea id="deliveryInput" name="deliveryAddress" rows="2" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}" placeholder="Enter complete delivery address"></textarea>
-                                
-                                <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="hidden w-full p-2 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Time *</label>
-                                <select name="timeSlot" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
-                                    <option value="" disabled selected>Select Time</option>
-                                    ${timeOptions}
-                                </select>
-                            </div>
-                            
-                            <!-- Gift Option (Only for Delivery) -->
-                            <div id="giftSection" class="hidden mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <label class="inline-flex items-center mb-2 cursor-pointer">
-                                    <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftFields(this)" class="text-purple-oven rounded focus:ring-purple-oven w-5 h-5">
-                                    <span class="ml-2 font-medium text-gray-700">Is this a gift?</span>
-                                </label>
-                                
-                                <div id="recipientFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 animate-fadeIn">
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Customer Details</h3>
+                                <div class="form-grid">
+                                    <input type="hidden" name="orderId" value="${orderData.fullId}">
+                                    
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Name *</label>
-                                        <input type="text" name="recipientName" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                                        <input type="text" name="customerName" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Mobile *</label>
-                                        <input type="tel" name="recipientMobile" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number * (Min. 8 digits)</label>
+                                        <input type="tel" name="contactNumber" required minlength="8" pattern="[0-9]{8,}" title="Please enter at least 8 digits" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                     </div>
-                                    <div class="sm:col-span-2">
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Dedication Note</label>
-                                        <textarea name="dedication" rows="2" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven" placeholder="Message on card..."></textarea>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Date of Order *</label>
+                                        <input type="date" name="orderDate" required min="${tomorrowStr}" max="${maxDateStr}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                        <p class="text-xs text-gray-500 mt-1">Select a date from tomorrow onwards (until Dec 31).</p>
+                                        <div id="dateError" class="hidden text-red-500 text-xs mt-1 font-semibold">Please select a valid date (Tomorrow onwards).</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Item Selection -->
-                        <div class="mb-8">
-                            <h3 id="itemSelectionTitle" class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Select Items</h3>
-                            ${renderPurpleOvenMenuSelection()}
-                        </div>
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Delivery / Pick Up</h3>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Order Type *</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange('Pick Up')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
+                                            <span class="ml-2 text-gray-700">Pick Up</span>
+                                        </label>
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange('Delivery')" class="text-purple-oven focus:ring-purple-oven w-4 h-4">
+                                            <span class="ml-2 text-gray-700">Delivery</span>
+                                        </label>
+                                    </div>
+                                </div>
 
-                        <!-- Submit Flow Changed: "Send Order" (Validate) -> Notice -> "Proceed" (Submit) -->
-                        <div class="text-center pt-4 flex flex-col items-center">
-                            
-                            <!-- Initial Button -->
-                            <div id="sendOrderBtnContainer" class="w-full sm:w-auto">
-                                <button type="button" onclick="validateAndShowNotice()"
-                                    class="w-full px-12 py-3 bg-purple-oven hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-oven mb-6">
+                                <div class="mb-4">
+                                    <label id="locationLabel" class="block text-sm font-medium text-gray-700 mb-1">Store Location *</label>
+                                    
+                                    <select id="pickupSelect" name="pickupLocation" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                        ${locationOptions}
+                                    </select>
+
+                                    <div id="deliveryNoticeContainer" class="hidden mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+                                        <p class="text-sm text-indigo-800">
+                                            We can arrange for delivery to your home, within Metro Manila. Please check the box below and provide the details.
+                                        </p>
+                                    </div>
+
+                                    <textarea id="deliveryInput" name="deliveryAddress" rows="2" class="hidden w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}" placeholder="Enter complete delivery address"></textarea>
+                                    
+                                    <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="hidden w-full p-2 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                    
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Time *</label>
+                                    <select name="timeSlot" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                        <option value="" disabled selected>Select Time</option>
+                                        ${timeOptions}
+                                    </select>
+                                </div>
+                                
+                                <div id="giftSection" class="hidden mt-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <label class="inline-flex items-center mb-2 cursor-pointer">
+                                        <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftFields(this)" class="text-purple-oven rounded focus:ring-purple-oven w-5 h-5">
+                                        <span class="ml-2 font-medium text-gray-700">Is this a gift?</span>
+                                    </label>
+                                    
+                                    <div id="recipientFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 animate-fadeIn">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Name *</label>
+                                            <input type="text" name="recipientName" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Recipient Mobile *</label>
+                                            <input type="tel" name="recipientMobile" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven">
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Dedication Note</label>
+                                            <textarea name="dedication" rows="2" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-purple-oven" placeholder="Message on card..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-8">
+                                <h3 id="itemSelectionTitle" class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Select Items</h3>
+                                ${renderPurpleOvenMenuSelection()}
+                            </div>
+
+                            <!-- Important Notice Section (Checkbox Removed) -->
+                            <div class="mb-8 bg-purple-50 border border-purple-200 rounded-lg p-4 text-sm text-gray-700">
+                                <p class="font-bold text-gray-900 mb-2">Important Notice:</p> 
+                                <p class="mb-2">As we bake in limited quantities daily, please allow us to confirm the availability of your order prior to sending the bill.</p>
+                                <p class="mb-0">Your order will be prepared and set aside for you as soon as full payment has been received by our team.</p>
+                            </div>
+
+                            <div class="text-center pt-4 flex flex-col items-center">
+                                
+                                <button type="submit" 
+                                    class="w-full sm:w-auto px-12 py-3 bg-purple-oven hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-oven mb-6">
                                     Send Order
                                 </button>
-                            </div>
-                            
-                            <!-- Confirmation Section (Hidden Initially) -->
-                            <div id="confirmationSection" class="hidden w-full flex flex-col items-center animate-fadeIn">
-                                <!-- Important Notice Box -->
-                                <div class="max-w-2xl text-center bg-gray-50 border border-purple-200 p-6 rounded-xl text-sm text-gray-700 leading-relaxed mb-6 shadow-sm">
-                                    <p class="font-bold text-gray-900 mb-2">Important Notice:</p> 
-                                    <p class="mb-2">As we bake in limited quantities daily, please allow us to confirm the availability of your order prior to sending the bill.</p>
-                                    <p>Your order will be prepared and set aside for you as soon as full payment has been received by our team.</p>
-                                </div>
 
-                                <!-- Final Submit Button -->
-                                <button type="submit" 
-                                    class="w-full sm:w-auto px-12 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-6">
-                                    Proceed with Order
-                                </button>
                             </div>
-
                         </div>
                         
-                        <!-- NEW: Success Message / Post-Submission Feedback (Hidden Initially) -->
+                        <!-- Success Message (Shown on Success) -->
                         <div id="successSection" class="hidden w-full flex flex-col items-center animate-fadeIn py-10">
                              <div class="bg-green-50 border border-green-200 p-8 rounded-2xl text-center max-w-lg shadow-sm">
                                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -1085,21 +951,49 @@
             `;
         }
 
-        /** Handles form submission to generate the mailto link. */
         function handleFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
+            
+            // --- 1. Date Validation Check ---
+            const dateInput = form.querySelector('input[name="orderDate"]');
+            const dateError = document.getElementById('dateError');
+            
+            if (dateInput && !dateInput.checkValidity()) {
+                dateError.classList.remove('hidden'); // Show explicit error message
+                dateInput.classList.add('border-red-500', 'focus:ring-red-500'); // Add red border
+                dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            } else {
+                if(dateInput) {
+                    dateError.classList.add('hidden');
+                    dateInput.classList.remove('border-red-500', 'focus:ring-red-500');
+                }
+            }
+
+            // --- 2. Remaining Browser Validation Check ---
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
             const formData = new FormData(form);
             
-            // --- Collect Checked Items ---
+            // --- 3. Item Selection Check ---
             const items = [];
             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
             
-            // Re-check item selection just in case, though validateAndShowNotice should handle it
             if (checkItemSelection() === 0) {
-                 // Should not happen if validation worked, but safe guard.
-                alert("Error: No items selected or quantity set.");
+                // Show custom error if no items selected
+                const errorMessage = document.getElementById('itemErrorContainer');
+                errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+                    <strong class="font-bold">Missing Items!</strong>
+                    <span class="block sm:inline">Please select at least one item and enter a quantity greater than zero.</span>
+                </div>`;
+                document.getElementById('itemSelectionTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
+            } else {
+                document.getElementById('itemErrorContainer').innerHTML = '';
             }
 
             checkboxes.forEach(cb => {
@@ -1110,16 +1004,15 @@
                 }
             });
             
-            // Update the local storage counter now that we are submitting
             incrementOrderNumber();
 
-            // --- Construct Email Body ---
+            // --- 4. Construct Email Body ---
             const orderId = formData.get('orderId');
             const customerName = formData.get('customerName');
             const contactNumber = formData.get('contactNumber');
             const orderDate = formData.get('orderDate');
             const timeSlot = formData.get('timeSlot');
-            const orderType = formData.get('orderType'); // Pick Up or Delivery
+            const orderType = formData.get('orderType'); 
             
             let locationDetails = "";
             let recipientDetails = "";
@@ -1129,7 +1022,6 @@
             } else {
                 locationDetails = `Delivery Address: ${formData.get('deliveryAddress')}\nLandmark: ${formData.get('landmark') || 'N/A'}`;
                 
-                // Check if gift
                 if (document.getElementById('isGift') && document.getElementById('isGift').checked) {
                     recipientDetails = `\n\n--- RECIPIENT DETAILS (GIFT) ---\nName: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nDedication: ${formData.get('dedication') || 'N/A'}`;
                 }
@@ -1154,24 +1046,16 @@ ${items.join('\n')}
 ---------------------------
 Sent via Purple Oven Web App`;
 
-            // --- Open Mail Client ---
+            // --- 5. Open Mail Client (and hide form, show success) ---
             const mailtoLink = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             window.location.href = mailtoLink;
             
-            // --- SHOW SUCCESS FEEDBACK ---
-            // Hide all other elements in the form and show the success message
-            const formChildren = Array.from(form.children);
-            formChildren.forEach(child => {
-                if(child.id !== 'successSection') {
-                    child.classList.add('hidden');
-                }
-            });
-
+            // Hide the form content and show the success message
+            document.getElementById('formContent').classList.add('hidden');
             document.getElementById('successSection').classList.remove('hidden');
             document.getElementById('successSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        /** Main render function that updates the app container based on state. */
         function render() {
             APP_ROOT.innerHTML = '';
             window.scrollTo(0, 0);
@@ -1182,12 +1066,10 @@ Sent via Purple Oven Web App`;
                 APP_ROOT.innerHTML = renderMenu(state.selectedBrand);
             } else if (state.view === 'order_form') {
                 APP_ROOT.innerHTML = renderOrderForm();
-                // Initialize default order type state
                 handleOrderTypeChange('Pick Up');
             }
         }
 
-        // --- Initial Render ---
         render();
 
     </script>

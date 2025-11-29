@@ -198,7 +198,8 @@
         
         let state = {
             view: 'landing', 
-            selectedBrand: 'PurpleOven'
+            selectedBrand: 'PurpleOven',
+            lastSubmittedFormData: null 
         };
 
         // --- MENU DATA ---
@@ -450,6 +451,8 @@
 
         function showOrder() {
             state.view = 'order_form';
+            // Clear last form data when starting a new order
+            state.lastSubmittedFormData = null; 
             render();
         }
 
@@ -602,32 +605,18 @@
             const now = new Date();
             const currentYear = now.getFullYear();
             
-            // NOTE: Using localStorage for order sequence is for demonstration only. 
-            // In a real application, this would be managed by a server/database (like Firestore).
-            let storedYear = localStorage.getItem('po_last_order_year');
-            let orderSeq = parseInt(localStorage.getItem('po_order_seq') || '1');
-
-            if (storedYear != currentYear) {
-                orderSeq = 1;
-            }
-
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
-            const seqStr = String(orderSeq).padStart(3, '0');
+            
+            // Random 4-digit number
+            const randomSuffix = Math.floor(1000 + Math.random() * 9000);
 
             return {
-                fullId: `${currentYear}${mm}${dd}-${seqStr}`,
-                seq: orderSeq,
+                fullId: `${currentYear}${mm}${dd}-${randomSuffix}`,
                 year: currentYear
             };
         }
 
-        function incrementOrderNumber() {
-            const { seq, year } = getNextOrderNumber();
-            localStorage.setItem('po_order_seq', seq + 1);
-            localStorage.setItem('po_last_order_year', year);
-        }
-        
         function checkItemSelection() {
              const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
              let selectedCount = 0;
@@ -735,6 +724,113 @@
 
             return html;
         }
+
+        /**
+         * Converts date and time strings into the required iCalendar (ICS) format (YYYYMMDDTHHMMSSZ).
+         */
+        function toICSDateTime(dateStr, timeStr) {
+            const date = new Date(dateStr);
+            if (isNaN(date)) {
+                return '';
+            }
+
+            let hour = 0;
+            const parts = timeStr.toUpperCase().split(' ');
+            if (parts.length === 2) {
+                const h = parseInt(parts[0], 10);
+                const ampm = parts[1];
+                
+                if (ampm === 'PM' && h !== 12) {
+                    hour = h + 12;
+                } else if (ampm === 'AM' && h === 12) {
+                    hour = 0; // 12 AM is 00:00
+                } else {
+                    hour = h;
+                }
+            } else {
+                 return '';
+            }
+
+            date.setHours(hour, 0, 0, 0); 
+
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hh = String(hour).padStart(2, '0');
+            
+            // Assuming the event is 1 hour long for the reminder duration
+            const endHour = String((hour + 1) % 24).padStart(2, '0');
+            
+            return {
+                start: `${year}${month}${day}T${hh}0000`,
+                end: `${year}${month}${day}T${endHour}0000`
+            };
+        }
+
+        /**
+         * Generates and downloads an ICS calendar file.
+         */
+        function downloadICS() {
+            const formData = state.lastSubmittedFormData;
+            if (!formData) {
+                console.error("No form data found for calendar generation.");
+                return;
+            }
+
+            const orderId = formData.get('orderId');
+            const orderDate = formData.get('orderDate');
+            const timeSlot = formData.get('timeSlot');
+            const orderType = formData.get('orderType');
+            const customerName = formData.get('customerName');
+            
+            let location = "";
+            let description = `Pickup/Delivery Time: ${timeSlot}. Check your email for confirmation and payment details.`;
+            let summary = `Purple Oven Order #${orderId}`;
+
+            if (orderType === 'Pick Up') {
+                location = formData.get('pickupLocation');
+                summary = `Purple Oven Pickup: Order #${orderId}`;
+            } else {
+                location = formData.get('deliveryAddress');
+                summary = `Purple Oven Delivery: Order #${orderId}`;
+            }
+            
+            description = `Customer: ${customerName}\nType: ${orderType}\nLocation: ${location}\n\n${description}`;
+
+            const dt = toICSDateTime(orderDate, timeSlot);
+
+            if (!dt.start) {
+                 alert("Could not generate calendar reminder due to invalid date/time selection.");
+                 return;
+            }
+
+            const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//PurpleOven//OrderReminder//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:${orderId}@purpleoven.com.ph
+DTSTAMP:${new Date().toISOString().replace(/[-:]|\\.\d{3}/g, '').substring(0, 15)}Z
+DTSTART:${dt.start}
+DTEND:${dt.end}
+SUMMARY:${summary}
+LOCATION:${location}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const filename = `PurpleOven_Order_${orderId}.ics`;
+
+            // Create a temporary link element to trigger the download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
 
         function renderOrderForm() {
             APP_ROOT.classList.remove('justify-center');
@@ -935,6 +1031,16 @@
                                         <li>Click <strong>Send</strong> to finalize your order.</li>
                                     </ol>
                                 </div>
+                                
+                                <!-- New Calendar Button -->
+                                <button type="button" onclick="downloadICS()"
+                                    class="w-full sm:w-auto px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-full shadow-md transform transition hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4 flex items-center justify-center mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Add Reminder to Calendar
+                                </button>
+                                <!-- End New Calendar Button -->
 
                                 <p class="text-xs text-gray-500">
                                     Note: Your order is <strong>not confirmed</strong> until you send the email and receive a reply from our team.
@@ -954,18 +1060,26 @@
         function handleFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
+            const formData = new FormData(form);
             
-            // --- 1. Date Validation Check ---
+            // --- 1. Date Validation Check (Fix for iOS "Nothing Happens") ---
             const dateInput = form.querySelector('input[name="orderDate"]');
             const dateError = document.getElementById('dateError');
             
-            if (dateInput && !dateInput.checkValidity()) {
-                dateError.classList.remove('hidden'); // Show explicit error message
-                dateInput.classList.add('border-red-500', 'focus:ring-red-500'); // Add red border
-                dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            } else {
-                if(dateInput) {
+            if (dateInput) {
+                // Parse date strings to compare actual values, as UI validation might fail on iOS
+                const selectedDateStr = dateInput.value;
+                const minDateStr = dateInput.getAttribute('min');
+                
+                if (selectedDateStr < minDateStr) {
+                    // Show error clearly
+                    dateError.classList.remove('hidden'); 
+                    dateInput.classList.add('border-red-500', 'focus:ring-red-500'); 
+                    dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Optional: Specific Alert for older iOS
+                    alert("Please select a date from tomorrow onwards."); 
+                    return; 
+                } else {
                     dateError.classList.add('hidden');
                     dateInput.classList.remove('border-red-500', 'focus:ring-red-500');
                 }
@@ -976,15 +1090,12 @@
                 form.reportValidity();
                 return;
             }
-
-            const formData = new FormData(form);
             
             // --- 3. Item Selection Check ---
             const items = [];
             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
             
             if (checkItemSelection() === 0) {
-                // Show custom error if no items selected
                 const errorMessage = document.getElementById('itemErrorContainer');
                 errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
                     <strong class="font-bold">Missing Items!</strong>
@@ -1004,9 +1115,10 @@
                 }
             });
             
-            incrementOrderNumber();
+            // Store the successful form data for the calendar function
+            state.lastSubmittedFormData = formData;
 
-            // --- 4. Construct Email Body ---
+            // --- 4. Construct Email Body (Fix for readable rows) ---
             const orderId = formData.get('orderId');
             const customerName = formData.get('customerName');
             const contactNumber = formData.get('contactNumber');
@@ -1020,34 +1132,27 @@
             if (orderType === 'Pick Up') {
                 locationDetails = `Store Location: ${formData.get('pickupLocation')}`;
             } else {
-                locationDetails = `Delivery Address: ${formData.get('deliveryAddress')}\nLandmark: ${formData.get('landmark') || 'N/A'}`;
+                locationDetails = `Delivery Address: ${formData.get('deliveryAddress')}%0D%0ALandmark: ${formData.get('landmark') || 'N/A'}`;
                 
                 if (document.getElementById('isGift') && document.getElementById('isGift').checked) {
-                    recipientDetails = `\n\n--- RECIPIENT DETAILS (GIFT) ---\nName: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nDedication: ${formData.get('dedication') || 'N/A'}`;
+                    recipientDetails = `%0D%0A%0D%0A--- RECIPIENT DETAILS (GIFT) ---%0D%0AName: ${formData.get('recipientName')}%0D%0AMobile: ${formData.get('recipientMobile')}%0D%0ADedication: ${formData.get('dedication') || 'N/A'}`;
                 }
             }
 
+            // Using %0D%0A for universally compatible line breaks (CRLF) in mailto links
             const subject = `Order #${orderId} - ${customerName} - ${orderDate}`;
             
-            const body = `ORDER DETAILS
----------------------------
-Order Reference: ${orderId}
-Customer Name: ${customerName}
-Contact Number: ${contactNumber}
-Date of Order: ${orderDate}
-Time: ${timeSlot}
-Order Type: ${orderType}
-${locationDetails}${recipientDetails}
-
-ORDER LIST
----------------------------
-${items.join('\n')}
-
----------------------------
-Sent via Purple Oven Web App`;
+            const body = `ORDER DETAILS%0D%0A---------------------------%0D%0AOrder Reference: ${orderId}%0D%0ACustomer Name: ${customerName}%0D%0AContact Number: ${contactNumber}%0D%0ADate of Order: ${orderDate}%0D%0ATime: ${timeSlot}%0D%0AOrder Type: ${orderType}%0D%0A${locationDetails}${recipientDetails}%0D%0A%0D%0AORDER LIST%0D%0A---------------------------%0D%0A${items.join('%0D%0A')}%0D%0A%0D%0A---------------------------%0D%0ASent via Purple Oven Web App`;
 
             // --- 5. Open Mail Client (and hide form, show success) ---
-            const mailtoLink = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            // Note: Body is already encoded with %0D%0A, so we only encode other parts if needed, or simply pass body as is if manually constructed carefully. 
+            // Ideally, we encode the whole component, but since we manually inserted %0D%0A, let's use encodeURIComponent for variables but keep structure.
+            // Safer approach: Build string normally with \r\n then encode.
+            
+            // Re-building body with standard JS strings first for safety, then encoding entirely.
+            const rawBody = `ORDER DETAILS\r\n---------------------------\r\nOrder Reference: ${orderId}\r\nCustomer Name: ${customerName}\r\nContact Number: ${contactNumber}\r\nDate of Order: ${orderDate}\r\nTime: ${timeSlot}\r\nOrder Type: ${orderType}\r\n${locationDetails.replace(/%0D%0A/g, '\r\n')}${recipientDetails.replace(/%0D%0A/g, '\r\n')}\r\n\r\nORDER LIST\r\n---------------------------\r\n${items.join('\r\n')}\r\n\r\n---------------------------\r\nSent via Purple Oven Web App`;
+
+            const mailtoLink = `mailto:${ORDER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(rawBody)}`;
             window.location.href = mailtoLink;
             
             // Hide the form content and show the success message

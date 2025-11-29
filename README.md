@@ -1,128 +1,115 @@
 # PurpleOvenMenu
 
-Purple Oven Web App - Comprehensive Editing Guide
+Purple Oven Web App - Menu Editing Guide
 
-This document provides full instructions on how to modify the content of the purple_oven_app.html file. You can edit these values using any text editor (Notepad, TextEdit, VS Code, etc.).
+This guide explains how to update the product menu in the index.html file. The menu data is stored in a JavaScript structure, allowing you to easily add categories, subcategories, and individual items.
 
-1. How to Edit Menu Items (Products)
+📍 Where to Edit
 
-The list of cakes, pastries, and prices is stored in a variable called purpleOvenMenuData.
+Open index.html in a text editor (VS Code, Notepad++, etc.).
 
-Steps to Edit:
+Scroll down to the <script> section at the bottom.
 
-Open purple_oven_app.html.
+Look for the variable constant named purpleOvenMenuData.
 
-Search for const purpleOvenMenuData.
-
-You will see a structure that looks like this:
+It looks like this:
 
 const purpleOvenMenuData = [
     {
         category: "Cakes",
+        subCategories: [ ... ]
+    },
+    // ...
+];
+
+
+1. How to Add a New Item
+
+Items are listed inside the items array of a specific subcategory.
+
+Syntax: { name: "Product Name - Unit" }
+
+Example:
+To add a "New Chocolate Cake" to an existing list:
+
+items: [
+    { name: "Existing Cake - whole" }, 
+    { name: "New Chocolate Cake - whole" } // <--- Add this line (don't forget the comma above!)
+]
+
+
+Note: The text after the hyphen - (e.g., whole, pc, box) is automatically styled as the "unit" in the order form.
+
+2. How to Add a Subcategory
+
+Subcategories are groups within a main Category (e.g., "Cheesecakes" inside "Cakes").
+
+Find the subCategories array of the parent Category.
+
+Add a new object with name and items.
+
+Example:
+
+subCategories: [
+    {
+        name: "Existing Subcategory",
+        items: [ ... ]
+    }, 
+    // New Subcategory Block
+    {
+        name: "New Delicious Section (8 In)",
+        items: [
+            { name: "New Item A - pc" },
+            { name: "New Item B - pc" }
+        ]
+    }
+]
+
+
+3. How to Add a Main Category
+
+To add a completely new section (like "Drinks" or "Merchandise"), add a new object to the main purpleOvenMenuData array.
+
+Example:
+
+const purpleOvenMenuData = [
+    // ... existing categories ...
+    
+    {
+        category: "New Category Name",
         subCategories: [
             {
-                name: "Light Cakes (8 In)",
+                name: "Optional Subheader", 
                 items: [
-                    { name: "Honeycomb Crunch Cake - Whole" },
-                    { name: "Pistachio Stardust - Whole" }
+                    { name: "New Product - pc" }
                 ]
-            },
-            // ... more categories
+            }
         ]
     }
 ];
 
 
-Common Tasks:
+4. Advanced Layout: Collapsible vs. Flat
 
-Change a Product Name/Price/Unit:
-Edit the text inside the quotes. Note that the unit (e.g., "Whole", "PC") is separated by a dash -.
+The app displays categories in two ways:
 
-Change: { name: "Honeycomb Crunch Cake - Whole" }
+Nested (Standard): Clicking the Category reveals Subcategory folders. (Used for "Cakes", "Bread and Pastries").
 
-To: { name: "Honeycomb Crunch Cake - P1200" }
+Flattened: Clicking the Category immediately shows the items (No subcategory folders). (Used for "Bars", "Cookies").
 
-Add a New Item:
-Add a new line inside the items bracket [...]. Ensure you add a comma , after the previous item.
+To control this, look for the categoriesToFlatten array in the code:
 
-items: [
-    { name: "Existing Cake - Whole" },
-    { name: "New Chocolate Cake - Whole" } // New Item
-]
+const categoriesToFlatten = ["Bars", "Cookies", "Loaves", "Snack Packs", "Reusable Bag"];
 
 
-Remove an Item:
-Simply delete the line containing the item you want to remove.
+To make a category flat: Add its name to this list. Ensure the subcategory name in your data is empty "".
 
-2. How to Edit Menu Images (The "See Menu" View)
+To make a category nested: Remove its name from this list.
 
-The menu images displayed when clicking "See Our Menu" are controlled by the brands variable.
+⚠️ Important Syntax Tips
 
-Search for const brands.
+Commas: Always put a comma , after an item or bracket } if there is another one following it.
 
-Look for the menuFiles line:
+Quotes: Always use double quotes "" or single quotes '' around text.
 
-// Option A: Automatic numbering (0 to 9)
-menuFiles: Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`)
-
-
-To use specific filenames:
-
-Replace the entire line with your list of filenames:
-
-menuFiles: [
-    "page1.jpg",
-    "page2.jpg",
-    "page3.jpg"
-]
-
-
-Note: Ensure these image files are saved in the exact same folder as the HTML file.
-
-3. How to Edit Dropdown Menus (Locations & Time)
-
-These options are found near the top of the <script> section.
-
-A. Pick Up Locations
-
-Search for const pickUpLocations. You can add, remove, or rename locations here.
-
-const pickUpLocations = [
-    'Temple Drive (QC)',
-    'My New Branch (Makati)', // You can add new ones here
-    'Alabang (MM)'
-];
-
-
-B. Time Slots
-
-Search for const timeSlots. Currently, it uses a formula. To customize it manually, replace the existing code with a simple list:
-
-const timeSlots = [
-    "9:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "1:00 PM",
-    "5:00 PM"
-];
-
-
-4. How to Edit Contact Information
-
-To update the phone numbers or email address displayed in the footer and the "Call Us" section:
-
-Email Address: Search for const ORDER_EMAIL.
-
-const ORDER_EMAIL = "orderonline@purpleoven.com.ph";
-
-
-Phone Numbers:
-
-Search for the phone number itself in the code (e.g., 8631 4221) and replace the text.
-
-Important: You must update both the display text (what the user sees) and the href="tel:..." link (what the phone dials).
-
-Example:
-
-<!-- Edit the number after tel: and the number in white text -->
-<a href="tel:+63288889999">+632 8888 9999</a>
+Backups: Before editing, save a backup copy of your .html file just in case!

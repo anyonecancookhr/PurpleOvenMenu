@@ -870,6 +870,8 @@ END:VCALENDAR`;
 
             const orderData = getNextOrderNumber();
 
+            // Note: Added 'novalidate' to the form to disable default browser validation
+            // allowing our custom JS validation (with red messages) to take over.
             return `
                 <div class="w-full max-w-4xl animate-fadeIn">
                     <div class="flex items-center justify-between mb-6">
@@ -880,7 +882,7 @@ END:VCALENDAR`;
                         <div class="w-20"></div> 
                     </div>
 
-                    <form id="orderForm" onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <form id="orderForm" novalidate onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
                         
                         <!-- Form Content (Hidden on Success) -->
                         <div id="formContent">
@@ -1077,53 +1079,122 @@ END:VCALENDAR`;
         function handleFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
-            const formData = new FormData(form);
             
-            // --- 1. Date Validation Check (Fix for iOS "Nothing Happens") ---
-            const dateInput = form.querySelector('input[name="orderDate"]');
+            // --- 0. Clear previous custom error states ---
+            // Remove existing error message texts
+            document.querySelectorAll('.custom-error-msg').forEach(el => el.remove());
+            // Remove error borders
+            document.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500', 'focus:ring-red-500'));
+            // Hide the specific date error div if it exists
             const dateError = document.getElementById('dateError');
+            if(dateError) dateError.classList.add('hidden');
+
+            let hasError = false;
+            let firstErrorInput = null;
+
+            // Helper function to apply error styles
+            const showError = (input, message) => {
+                input.classList.add('border-red-500', 'focus:ring-red-500');
+                
+                // Check if error message already exists (to avoid duplicates if called multiple times)
+                if (input.nextElementSibling && input.nextElementSibling.classList.contains('custom-error-msg')) {
+                     return;
+                }
+
+                const msg = document.createElement('p');
+                msg.className = 'text-red-500 text-xs mt-1 font-semibold custom-error-msg animate-fadeIn';
+                msg.innerText = message;
+                
+                // Insert after input (or select/textarea)
+                if (input.parentNode) {
+                    input.parentNode.insertBefore(msg, input.nextSibling);
+                }
+
+                if (!firstErrorInput) {
+                    firstErrorInput = input;
+                }
+                hasError = true;
+            };
+
+            // --- 1. Custom Validation Logic ---
             
+            // A. Date Validation
+            const dateInput = form.querySelector('input[name="orderDate"]');
             if (dateInput) {
-                // Parse date strings to compare actual values, as UI validation might fail on iOS
                 const selectedDateStr = dateInput.value;
                 const minDateStr = dateInput.getAttribute('min');
                 
-                if (selectedDateStr < minDateStr) {
-                    // Show error clearly
-                    dateError.classList.remove('hidden'); 
-                    dateInput.classList.add('border-red-500', 'focus:ring-red-500'); 
-                    dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Optional: Specific Alert for older iOS
-                    alert("Please select a date from tomorrow onwards."); 
-                    return; 
-                } else {
-                    dateError.classList.add('hidden');
-                    dateInput.classList.remove('border-red-500', 'focus:ring-red-500');
+                if (!selectedDateStr) {
+                    showError(dateInput, "Please select a date.");
+                } else if (selectedDateStr < minDateStr) {
+                    showError(dateInput, "Please select a date from tomorrow onwards.");
                 }
             }
 
-            // --- 2. Remaining Browser Validation Check ---
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+            // B. Check all other 'required' fields manually
+            // Since we used 'novalidate' on the form, the browser won't stop submission automatically.
+            // We iterate through all elements that have the 'required' attribute.
+            // Note: visible required fields only. The hidden ones (like delivery address when pickup is selected)
+            // won't cause issues if we check `offsetParent` (visibility) or just rely on our toggle logic 
+            // removing the required attribute (which we do in handleOrderTypeChange).
             
-            // --- 3. Item Selection Check ---
-            const items = [];
-            const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
-            
+            const requiredInputs = form.querySelectorAll('[required]');
+            requiredInputs.forEach(input => {
+                // If value is empty
+                if (!input.value.trim()) {
+                    let msg = "This field is required.";
+                    
+                    // Customize messages based on field name
+                    if (input.name === 'customerName') msg = "Please enter your full name.";
+                    if (input.name === 'contactNumber') msg = "Contact number is required.";
+                    if (input.name === 'timeSlot') msg = "Please select a time.";
+                    if (input.name === 'pickupLocation') msg = "Please select a store location.";
+                    if (input.name === 'deliveryAddress') msg = "Please enter your delivery address.";
+                    if (input.name === 'recipientName') msg = "Recipient name is required.";
+                    if (input.name === 'recipientMobile') msg = "Recipient mobile is required.";
+
+                    showError(input, msg);
+                }
+                // Specific Check for Contact Number length
+                else if (input.name === 'contactNumber' && input.value.length < 8) {
+                    showError(input, "Please enter at least 8 digits.");
+                }
+            });
+
+            // C. Item Selection Check
             if (checkItemSelection() === 0) {
-                const errorMessage = document.getElementById('itemErrorContainer');
-                errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+                 const errorMessage = document.getElementById('itemErrorContainer');
+                 errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 custom-error-msg" role="alert">
                     <strong class="font-bold">Missing Items!</strong>
                     <span class="block sm:inline">Please select at least one item and enter a quantity greater than zero.</span>
                 </div>`;
-                document.getElementById('itemSelectionTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
+                hasError = true;
+                if (!firstErrorInput) {
+                    // If no other input failed, scroll to items
+                    firstErrorInput = document.getElementById('itemSelectionTitle');
+                }
             } else {
                 document.getElementById('itemErrorContainer').innerHTML = '';
             }
 
+            // --- 2. Stop and Scroll if Errors Exist ---
+            if (hasError) {
+                if (firstErrorInput) {
+                    // Smooth scroll to the first error
+                    firstErrorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Try to focus if it's an input
+                    if(firstErrorInput.focus) {
+                        firstErrorInput.focus({ preventScroll: true });
+                    }
+                }
+                return; // Stop execution
+            }
+
+            // --- 3. Proceed if Valid ---
+            const formData = new FormData(form);
+            const items = [];
+            const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
+            
             checkboxes.forEach(cb => {
                 const qtyInputId = `qty_${cb.id}`;
                 const qtyVal = document.getElementById(qtyInputId).value;
@@ -1135,7 +1206,7 @@ END:VCALENDAR`;
             // Store the successful form data for the calendar function
             state.lastSubmittedFormData = formData;
 
-            // --- 4. Construct Email Body (Fix for readable rows) ---
+            // --- 4. Construct Email Body ---
             const orderId = formData.get('orderId');
             const customerName = formData.get('customerName');
             const contactNumber = formData.get('contactNumber');
@@ -1156,15 +1227,7 @@ END:VCALENDAR`;
                 }
             }
 
-            // Using %0D%0A for universally compatible line breaks (CRLF) in mailto links
             const subject = `Order #${orderId} - ${customerName} - ${orderDate}`;
-            
-            const body = `ORDER DETAILS%0D%0A---------------------------%0D%0AOrder Reference: ${orderId}%0D%0ACustomer Name: ${customerName}%0D%0AContact Number: ${contactNumber}%0D%0ADate of Order: ${orderDate}%0D%0ATime: ${timeSlot}%0D%0AOrder Type: ${orderType}%0D%0A${locationDetails}${recipientDetails}%0D%0A%0D%0AORDER LIST%0D%0A---------------------------%0D%0A${items.join('%0D%0A')}%0D%0A%0D%0A---------------------------%0D%0ASent via Purple Oven Web App`;
-
-            // --- 5. Open Mail Client (and hide form, show success) ---
-            // Note: Body is already encoded with %0D%0A, so we only encode other parts if needed, or simply pass body as is if manually constructed carefully. 
-            // Ideally, we encode the whole component, but since we manually inserted %0D%0A, let's use encodeURIComponent for variables but keep structure.
-            // Safer approach: Build string normally with \r\n then encode.
             
             // Re-building body with standard JS strings first for safety, then encoding entirely.
             const rawBody = `ORDER DETAILS\r\n---------------------------\r\nOrder Reference: ${orderId}\r\nCustomer Name: ${customerName}\r\nContact Number: ${contactNumber}\r\nDate of Order: ${orderDate}\r\nTime: ${timeSlot}\r\nOrder Type: ${orderType}\r\n${locationDetails.replace(/%0D%0A/g, '\r\n')}${recipientDetails.replace(/%0D%0A/g, '\r\n')}\r\n\r\nORDER LIST\r\n---------------------------\r\n${items.join('\r\n')}\r\n\r\n---------------------------\r\nSent via Purple Oven Web App`;

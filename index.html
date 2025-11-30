@@ -831,6 +831,19 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
+        function validateDate(input) {
+            const dateError = document.getElementById('dateError');
+            
+            // Comparison of "YYYY-MM-DD" strings works lexicographically
+            if (input.value && input.value < input.min) {
+                input.value = ''; // Reset invalid date
+                dateError.classList.remove('hidden');
+                input.classList.add('border-red-500', 'focus:ring-red-500');
+            } else {
+                dateError.classList.add('hidden');
+                input.classList.remove('border-red-500', 'focus:ring-red-500');
+            }
+        }
 
         function renderOrderForm() {
             APP_ROOT.classList.remove('justify-center');
@@ -915,7 +928,11 @@ END:VCALENDAR`;
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Date of Order *</label>
-                                        <input type="date" name="orderDate" required min="${tomorrowStr}" max="${maxDateStr}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                        <input type="date" name="orderDate" required 
+                                            min="${tomorrowStr}" 
+                                            max="${maxDateStr}" 
+                                            onchange="validateDate(this)"
+                                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                         <p class="text-xs text-gray-500 mt-1">Select a date from tomorrow onwards (until Dec 31).</p>
                                         <div id="dateError" class="hidden text-red-500 text-xs mt-1 font-semibold">Please select a valid date (Tomorrow onwards).</div>
                                     </div>

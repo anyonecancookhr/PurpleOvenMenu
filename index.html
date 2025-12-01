@@ -605,18 +605,32 @@
             const now = new Date();
             const currentYear = now.getFullYear();
             
+            // NOTE: Using localStorage for order sequence is for demonstration only. 
+            // In a real application, this would be managed by a server/database (like Firestore).
+            let storedYear = localStorage.getItem('po_last_order_year');
+            let orderSeq = parseInt(localStorage.getItem('po_order_seq') || '1');
+
+            if (storedYear != currentYear) {
+                orderSeq = 1;
+            }
+
             const mm = String(now.getMonth() + 1).padStart(2, '0');
             const dd = String(now.getDate()).padStart(2, '0');
-            
-            // Random 4-digit number
-            const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+            const seqStr = String(orderSeq).padStart(3, '0');
 
             return {
-                fullId: `${currentYear}${mm}${dd}-${randomSuffix}`,
+                fullId: `${currentYear}${mm}${dd}-${seqStr}`,
+                seq: orderSeq,
                 year: currentYear
             };
         }
 
+        function incrementOrderNumber() {
+            const { seq, year } = getNextOrderNumber();
+            localStorage.setItem('po_order_seq', seq + 1);
+            localStorage.setItem('po_last_order_year', year);
+        }
+        
         function checkItemSelection() {
              const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
              let selectedCount = 0;
@@ -727,10 +741,14 @@
 
         /**
          * Converts date and time strings into the required iCalendar (ICS) format (YYYYMMDDTHHMMSSZ).
+         * @param {string} dateStr - Date in 'YYYY-MM-DD' format.
+         * @param {string} timeStr - Time in 'h AM/PM' format (e.g., '10 AM', '12 PM').
+         * @returns {string} The ICS formatted date/time string.
          */
         function toICSDateTime(dateStr, timeStr) {
             const date = new Date(dateStr);
             if (isNaN(date)) {
+                console.error("Invalid date string provided:", dateStr);
                 return '';
             }
 
@@ -748,10 +766,19 @@
                     hour = h;
                 }
             } else {
+                 console.error("Invalid time string format:", timeStr);
                  return '';
             }
 
-            date.setHours(hour, 0, 0, 0); 
+            // Set the date object to the specified time (using local time for display purposes)
+            // Note: ICS files generally prefer UTC, but for simple user reminders in a local timezone, 
+            // setting the time in the local date object and using Z is a common quick fix for reliable parsing.
+            // A safer, but more complex approach is DTSTART;TZID=<timezone>
+            date.setHours(hour, 0, 0, 0); // Set hour, minutes, seconds, milliseconds
+
+            // To avoid timezone confusion and ensure it respects the user's selected date/time, 
+            // we will format it as a floating time (no Z or TZID) which is interpreted by the calendar app
+            // in the local time zone of the device.
 
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -769,6 +796,7 @@
 
         /**
          * Generates and downloads an ICS calendar file.
+         * @param {FormData} formData - The submitted form data.
          */
         function downloadICS() {
             const formData = state.lastSubmittedFormData;
@@ -831,19 +859,6 @@ END:VCALENDAR`;
             document.body.removeChild(link);
         }
 
-        function validateDate(input) {
-            const dateError = document.getElementById('dateError');
-            
-            // Comparison of "YYYY-MM-DD" strings works lexicographically
-            if (input.value && input.value < input.min) {
-                input.value = ''; // Reset invalid date
-                dateError.classList.remove('hidden');
-                input.classList.add('border-red-500', 'focus:ring-red-500');
-            } else {
-                dateError.classList.add('hidden');
-                input.classList.remove('border-red-500', 'focus:ring-red-500');
-            }
-        }
 
         function renderOrderForm() {
             APP_ROOT.classList.remove('justify-center');
@@ -870,8 +885,6 @@ END:VCALENDAR`;
 
             const orderData = getNextOrderNumber();
 
-            // Note: Added 'novalidate' to the form to disable default browser validation
-            // allowing our custom JS validation (with red messages) to take over.
             return `
                 <div class="w-full max-w-4xl animate-fadeIn">
                     <div class="flex items-center justify-between mb-6">
@@ -882,7 +895,7 @@ END:VCALENDAR`;
                         <div class="w-20"></div> 
                     </div>
 
-                    <form id="orderForm" novalidate onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <form id="orderForm" onsubmit="handleFormSubmit(event)" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
                         
                         <!-- Form Content (Hidden on Success) -->
                         <div id="formContent">
@@ -909,14 +922,8 @@ END:VCALENDAR`;
                                     </div>
 
                                     <div class="option-box p-4">
-                                        <h4 class="font-bold text-purple-oven mb-2">Option 2: Email Orders To Us</h4>
-                                        <p class="text-sm text-gray-700 mb-4">For orders tomorrow and onwards, please provide us with the details below and send the email to <span class="font-semibold text-purple-oven">orderonline@purpleoven.com.ph</span>. We will contact you to confirm the availability of your order before sending the bill.</p>
-                                        
-                                        <div class="bg-white bg-opacity-60 rounded p-3 text-sm text-gray-800 border border-purple-100">
-                                            <p class="font-bold text-purple-oven mb-1">Important Notice:</p>
-                                            <p class="mb-2">As we bake in limited quantities daily, please allow us to confirm the availability of your order prior to sending the bill.</p>
-                                            <p class="font-medium">We will call you as soon as we have received your email and reviewed your orders.</p>
-                                        </div>
+                                        <h4 class="font-bold text-purple-oven mb-2">Option 2: Order Online</h4>
+                                        <p class="text-sm text-gray-700">For orders tomorrow and onwards, please provide us with the details below. We will contact you to confirm the availability of your order before sending the bill.</p>
                                     </div>
                                 </div>
                             </div>
@@ -936,11 +943,7 @@ END:VCALENDAR`;
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Date of Order *</label>
-                                        <input type="date" name="orderDate" required 
-                                            min="${tomorrowStr}" 
-                                            max="${maxDateStr}" 
-                                            onchange="validateDate(this)"
-                                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
+                                        <input type="date" name="orderDate" required min="${tomorrowStr}" max="${maxDateStr}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-opacity-50 ${borderClass}">
                                         <p class="text-xs text-gray-500 mt-1">Select a date from tomorrow onwards (until Dec 31).</p>
                                         <div id="dateError" class="hidden text-red-500 text-xs mt-1 font-semibold">Please select a valid date (Tomorrow onwards).</div>
                                     </div>
@@ -972,7 +975,7 @@ END:VCALENDAR`;
 
                                     <div id="deliveryNoticeContainer" class="hidden mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-4">
                                         <p class="text-sm text-indigo-800">
-                                            We can arrange for delivery to your home, within Metro Manila. Please check the box below and provide the details.
+                                            We can arrange for delivery to your home, within Metro Manila. Please provide the delivery details below.
                                         </p>
                                     </div>
 
@@ -1018,11 +1021,18 @@ END:VCALENDAR`;
                                 ${renderPurpleOvenMenuSelection()}
                             </div>
 
+                            <!-- Important Notice Section (Checkbox Removed) -->
+                            <div class="mb-8 bg-purple-50 border border-purple-200 rounded-lg p-4 text-sm text-gray-700">
+                                <p class="font-bold text-gray-900 mb-2">Important Notice:</p> 
+                                <p class="mb-2">As we bake in limited quantities daily, please allow us to confirm the availability of your order prior to sending the bill.</p>
+                                <p class="mb-0">Your order will be prepared and set aside for you as soon as full payment has been received by our team.</p>
+                            </div>
+
                             <div class="text-center pt-4 flex flex-col items-center">
                                 
                                 <button type="submit" 
                                     class="w-full sm:w-auto px-12 py-3 bg-purple-oven hover:bg-indigo-700 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-oven mb-6">
-                                    Email Order
+                                    Send Order
                                 </button>
 
                             </div>
@@ -1036,10 +1046,19 @@ END:VCALENDAR`;
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Thank you!</h3>
-                                <p class="text-gray-600 mb-6 font-medium">
-                                    Please expect a call from us before 6pm to confirm the availability of your order.
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">Email Draft Created!</h3>
+                                <p class="text-gray-600 mb-6">
+                                    We have opened your default email app with the order details pre-filled.
                                 </p>
+                                
+                                <div class="bg-white border border-gray-200 rounded-lg p-4 mb-6 text-left">
+                                    <p class="font-semibold text-gray-800 text-sm mb-2">Next Steps:</p>
+                                    <ol class="list-decimal list-inside text-sm text-gray-600 space-y-1">
+                                        <li>Check your email app (Gmail, Outlook, Mail).</li>
+                                        <li>Review the order details.</li>
+                                        <li>Click <strong>Send</strong> to finalize your order.</li>
+                                    </ol>
+                                </div>
                                 
                                 <!-- New Calendar Button -->
                                 <button type="button" onclick="downloadICS()"
@@ -1050,6 +1069,10 @@ END:VCALENDAR`;
                                     Add Reminder to Calendar
                                 </button>
                                 <!-- End New Calendar Button -->
+
+                                <p class="text-xs text-gray-500">
+                                    Note: Your order is <strong>not confirmed</strong> until you send the email and receive a reply from our team.
+                                </p>
                                 
                                 <button type="button" onclick="showLanding()" class="mt-8 text-purple-oven font-medium hover:underline text-sm">
                                     Back to Home
@@ -1065,122 +1088,53 @@ END:VCALENDAR`;
         function handleFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
+            const formData = new FormData(form);
             
-            // --- 0. Clear previous custom error states ---
-            // Remove existing error message texts
-            document.querySelectorAll('.custom-error-msg').forEach(el => el.remove());
-            // Remove error borders
-            document.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500', 'focus:ring-red-500'));
-            // Hide the specific date error div if it exists
-            const dateError = document.getElementById('dateError');
-            if(dateError) dateError.classList.add('hidden');
-
-            let hasError = false;
-            let firstErrorInput = null;
-
-            // Helper function to apply error styles
-            const showError = (input, message) => {
-                input.classList.add('border-red-500', 'focus:ring-red-500');
-                
-                // Check if error message already exists (to avoid duplicates if called multiple times)
-                if (input.nextElementSibling && input.nextElementSibling.classList.contains('custom-error-msg')) {
-                     return;
-                }
-
-                const msg = document.createElement('p');
-                msg.className = 'text-red-500 text-xs mt-1 font-semibold custom-error-msg animate-fadeIn';
-                msg.innerText = message;
-                
-                // Insert after input (or select/textarea)
-                if (input.parentNode) {
-                    input.parentNode.insertBefore(msg, input.nextSibling);
-                }
-
-                if (!firstErrorInput) {
-                    firstErrorInput = input;
-                }
-                hasError = true;
-            };
-
-            // --- 1. Custom Validation Logic ---
-            
-            // A. Date Validation
+            // --- 1. Date Validation Check (Fix for iOS "Nothing Happens") ---
             const dateInput = form.querySelector('input[name="orderDate"]');
+            const dateError = document.getElementById('dateError');
+            
             if (dateInput) {
+                // Parse date strings to compare actual values, as UI validation might fail on iOS
                 const selectedDateStr = dateInput.value;
                 const minDateStr = dateInput.getAttribute('min');
                 
-                if (!selectedDateStr) {
-                    showError(dateInput, "Please select a date.");
-                } else if (selectedDateStr < minDateStr) {
-                    showError(dateInput, "Please select a date from tomorrow onwards.");
+                if (selectedDateStr < minDateStr) {
+                    // Show error clearly
+                    dateError.classList.remove('hidden'); 
+                    dateInput.classList.add('border-red-500', 'focus:ring-red-500'); 
+                    dateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Optional: Specific Alert for older iOS
+                    alert("Please select a date from tomorrow onwards."); 
+                    return; 
+                } else {
+                    dateError.classList.add('hidden');
+                    dateInput.classList.remove('border-red-500', 'focus:ring-red-500');
                 }
             }
 
-            // B. Check all other 'required' fields manually
-            // Since we used 'novalidate' on the form, the browser won't stop submission automatically.
-            // We iterate through all elements that have the 'required' attribute.
-            // Note: visible required fields only. The hidden ones (like delivery address when pickup is selected)
-            // won't cause issues if we check `offsetParent` (visibility) or just rely on our toggle logic 
-            // removing the required attribute (which we do in handleOrderTypeChange).
+            // --- 2. Remaining Browser Validation Check ---
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
             
-            const requiredInputs = form.querySelectorAll('[required]');
-            requiredInputs.forEach(input => {
-                // If value is empty
-                if (!input.value.trim()) {
-                    let msg = "This field is required.";
-                    
-                    // Customize messages based on field name
-                    if (input.name === 'customerName') msg = "Please enter your full name.";
-                    if (input.name === 'contactNumber') msg = "Contact number is required.";
-                    if (input.name === 'timeSlot') msg = "Please select a time.";
-                    if (input.name === 'pickupLocation') msg = "Please select a store location.";
-                    if (input.name === 'deliveryAddress') msg = "Please enter your delivery address.";
-                    if (input.name === 'recipientName') msg = "Recipient name is required.";
-                    if (input.name === 'recipientMobile') msg = "Recipient mobile is required.";
-
-                    showError(input, msg);
-                }
-                // Specific Check for Contact Number length
-                else if (input.name === 'contactNumber' && input.value.length < 8) {
-                    showError(input, "Please enter at least 8 digits.");
-                }
-            });
-
-            // C. Item Selection Check
+            // --- 3. Item Selection Check ---
+            const items = [];
+            const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
+            
             if (checkItemSelection() === 0) {
-                 const errorMessage = document.getElementById('itemErrorContainer');
-                 errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 custom-error-msg" role="alert">
+                const errorMessage = document.getElementById('itemErrorContainer');
+                errorMessage.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
                     <strong class="font-bold">Missing Items!</strong>
                     <span class="block sm:inline">Please select at least one item and enter a quantity greater than zero.</span>
                 </div>`;
-                hasError = true;
-                if (!firstErrorInput) {
-                    // If no other input failed, scroll to items
-                    firstErrorInput = document.getElementById('itemSelectionTitle');
-                }
+                document.getElementById('itemSelectionTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
             } else {
                 document.getElementById('itemErrorContainer').innerHTML = '';
             }
 
-            // --- 2. Stop and Scroll if Errors Exist ---
-            if (hasError) {
-                if (firstErrorInput) {
-                    // Smooth scroll to the first error
-                    firstErrorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Try to focus if it's an input
-                    if(firstErrorInput.focus) {
-                        firstErrorInput.focus({ preventScroll: true });
-                    }
-                }
-                return; // Stop execution
-            }
-
-            // --- 3. Proceed if Valid ---
-            const formData = new FormData(form);
-            const items = [];
-            const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
-            
             checkboxes.forEach(cb => {
                 const qtyInputId = `qty_${cb.id}`;
                 const qtyVal = document.getElementById(qtyInputId).value;
@@ -1192,7 +1146,7 @@ END:VCALENDAR`;
             // Store the successful form data for the calendar function
             state.lastSubmittedFormData = formData;
 
-            // --- 4. Construct Email Body ---
+            // --- 4. Construct Email Body (Fix for readable rows) ---
             const orderId = formData.get('orderId');
             const customerName = formData.get('customerName');
             const contactNumber = formData.get('contactNumber');
@@ -1213,7 +1167,15 @@ END:VCALENDAR`;
                 }
             }
 
+            // Using %0D%0A for universally compatible line breaks (CRLF) in mailto links
             const subject = `Order #${orderId} - ${customerName} - ${orderDate}`;
+            
+            const body = `ORDER DETAILS%0D%0A---------------------------%0D%0AOrder Reference: ${orderId}%0D%0ACustomer Name: ${customerName}%0D%0AContact Number: ${contactNumber}%0D%0ADate of Order: ${orderDate}%0D%0ATime: ${timeSlot}%0D%0AOrder Type: ${orderType}%0D%0A${locationDetails}${recipientDetails}%0D%0A%0D%0AORDER LIST%0D%0A---------------------------%0D%0A${items.join('%0D%0A')}%0D%0A%0D%0A---------------------------%0D%0ASent via Purple Oven Web App`;
+
+            // --- 5. Open Mail Client (and hide form, show success) ---
+            // Note: Body is already encoded with %0D%0A, so we only encode other parts if needed, or simply pass body as is if manually constructed carefully. 
+            // Ideally, we encode the whole component, but since we manually inserted %0D%0A, let's use encodeURIComponent for variables but keep structure.
+            // Safer approach: Build string normally with \r\n then encode.
             
             // Re-building body with standard JS strings first for safety, then encoding entirely.
             const rawBody = `ORDER DETAILS\r\n---------------------------\r\nOrder Reference: ${orderId}\r\nCustomer Name: ${customerName}\r\nContact Number: ${contactNumber}\r\nDate of Order: ${orderDate}\r\nTime: ${timeSlot}\r\nOrder Type: ${orderType}\r\n${locationDetails.replace(/%0D%0A/g, '\r\n')}${recipientDetails.replace(/%0D%0A/g, '\r\n')}\r\n\r\nORDER LIST\r\n---------------------------\r\n${items.join('\r\n')}\r\n\r\n---------------------------\r\nSent via Purple Oven Web App`;

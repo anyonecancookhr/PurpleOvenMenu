@@ -1094,6 +1094,22 @@
             const orderType = formData.get('orderType');
             const location = orderType === 'Pick Up' ? formData.get('pickupLocation') : formData.get('deliveryAddress') + (formData.get('landmark') ? ` (Landmark: ${formData.get('landmark')})` : '');
             
+            // Create a formatted full message string for default EmailJS templates
+            const fullDetails = 
+`Order ID: ${orderId}
+Name: ${formData.get('customerName')}
+Mobile: ${formData.get('customerMobile')}
+Email: ${formData.get('customerEmail')}
+Type: ${orderType}
+Location: ${location}
+Date: ${formData.get('orderDate')}
+Time: ${formData.get('orderTime')}
+Gift: ${formData.get('isGift') ? 'Yes' : 'No'}
+${formData.get('isGift') ? `Recipient: ${formData.get('recipientName')} (${formData.get('recipientMobile')})\nDedication: ${formData.get('dedication')}` : ''}
+
+Items:
+${orderSummary}`;
+
             const templateParams = {
                 order_id: orderId,
                 customer_name: formData.get('customerName'),
@@ -1106,8 +1122,14 @@
                 is_gift: formData.get('isGift') ? 'YES' : 'NO',
                 recipient_details: formData.get('isGift') ? 
                     `Name: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nNote: ${formData.get('dedication')}` : 'N/A',
-                order_summary: orderSummary
+                order_summary: orderSummary,
+                
+                // IMPORTANT: Adding generic 'message' fields which are default in many EmailJS templates
+                message: fullDetails,
+                my_message: fullDetails
             };
+
+            console.log('Sending params:', templateParams); // For debugging
 
             // 3. Save details and Send Email
             state.lastOrderDetails = templateParams; // Save details for the success page

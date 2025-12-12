@@ -1056,7 +1056,7 @@
             } else if (state.view === 'order_form') {
                 renderOrderForm();
             } else if (state.view === 'success') {
-                renderSuccess();
+                APP_ROOT.innerHTML = renderSuccess();
             }
         }
         

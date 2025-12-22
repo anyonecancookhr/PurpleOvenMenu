@@ -13,6 +13,12 @@
 
     <!-- REQUIRED: EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- REQUIRED: Firebase SDKs for Sequential Order Numbers -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
+
     <style>
         :root {
             --purple-oven: #5D3FD3;
@@ -33,7 +39,6 @@
         .bg-purple-oven {
             background-color: var(--purple-oven);
         }
-        /* Custom scrollbar */
         .menu-scroll::-webkit-scrollbar {
             width: 8px;
         }
@@ -41,7 +46,6 @@
             background-color: #e0e0e0;
             border-radius: 4px;
         }
-        /* Responsive form grid */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -52,7 +56,6 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
-        /* Animations */
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out;
         }
@@ -60,26 +63,12 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .location-link {
-            transition: all 0.15s ease-in-out;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            display: inline-block;
-        }
-        .location-link:hover {
-            background-color: rgba(93, 63, 211, 0.1);
-        }
-        /* Collapsible icon styling */
         details[open] > summary .summary-icon {
             transform: rotate(180deg);
         }
         .summary-icon {
             transition: transform 0.3s ease;
         }
-        .nested-summary {
-            padding-left: 0.75rem;
-        }
-        /* Custom Notice Box */
         .notice-box {
             background-color: #FAF5FF;
             border: 1px solid #E9D5FF;
@@ -89,36 +78,37 @@
             background-color: #F3E8FF;
             border-radius: 0.5rem;
         }
-        /* Loading Spinner */
         .spinner {
             border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top: 3px solid white;
             width: 20px;
             height: 20px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Checkbox custom style */
         input[type="checkbox"]:checked {
             background-color: var(--purple-oven);
             border-color: var(--purple-oven);
         }
-        /* Details Summary Styles */
         details summary {
             list-style: none;
         }
         details summary::-webkit-details-marker {
             display: none;
         }
-        /* Flatpickr Customization */
-        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
-            background: #5D3FD3;
-            border-color: #5D3FD3;
+        .flatpickr-day.selected {
+            background: #5D3FD3 !important;
+            border-color: #5D3FD3 !important;
+        }
+        .flatpickr-day.disabled, .flatpickr-day.disabled:hover {
+            color: #ccc;
+            background: transparent;
+            border-color: transparent;
+            cursor: default;
         }
     </style>
 </head>
@@ -131,7 +121,6 @@
     <footer class="bg-gray-100 py-10 px-4 w-full border-t border-gray-200">
         <div class="max-w-6xl mx-auto">
             <div class="flex flex-col md:flex-row gap-10">
-                <!-- Left Side: Locations -->
                 <div class="md:w-2/3">
                     <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,7 +179,6 @@
                     </div>
                 </div>
 
-                <!-- Right Side: Contact -->
                 <div class="md:w-1/3 md:border-l md:border-gray-300 md:pl-10">
                     <h3 class="text-xl font-bold mb-6 text-purple-oven flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -200,969 +188,520 @@
                         Contact Us
                     </h3>
                     <p class="text-sm text-gray-500 mb-6 font-medium">9AM to 6PM</p>
-                    
                     <div class="space-y-4">
                         <div class="flex flex-col">
                             <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Landline</span>
-                            <a href="tel:+63286314221" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-lg transition-colors inline-block border border-transparent hover:border-purple-100">
+                            <a href="tel:+63286314221" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-full transition-colors inline-block border border-transparent hover:border-purple-100 px-4">
                                 +632 8631 4221
                             </a>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Viber / Mobile</span>
-                            <a href="tel:+639177103227" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-lg transition-colors inline-block border border-transparent hover:border-purple-100">
+                            <a href="tel:+639177103227" class="text-lg text-purple-oven font-bold hover:bg-purple-50 p-2 rounded-full transition-colors inline-block border border-transparent hover:border-purple-100 px-4">
                                 +63917 710 3227
                             </a>
                         </div>
                         <div class="flex flex-col pt-2">
-                            <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Email</span>
-                            <a href="mailto:orderonline@purpleoven.com.ph" class="text-base text-gray-700 font-medium hover:text-purple-oven break-all hover:underline">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1 px-4">Email</span>
+                            <a href="mailto:orderonline@purpleoven.com.ph" class="text-base text-gray-700 font-medium hover:text-purple-oven break-all hover:underline px-4">
                                 orderonline@purpleoven.com.ph
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="mt-10 text-center text-xs text-gray-500 border-t pt-6">
-                © 2025 Purple Oven. All rights reserved.
+            <div class="mt-10 flex flex-col items-center gap-4 text-center text-xs text-gray-500 border-t pt-6">
+                <p>© 2025 Purple Oven. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // --- Global State and Constants ---
-        const APP_ROOT = document.getElementById('app');
-        
-        // --- GITHUB IMAGE REFERENCES ---
-        // Ensure 'purple_oven.png' and 'PO_Menu-images-0.jpg' etc. are in the SAME repo folder as this index.html
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, addDoc, getDocs, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Constants ---
         const PO_LOGO_URL = "purple_oven.png";
+
+        // --- Firebase Configuration ---
+        // !!! IMPORTANT FOR GITHUB/EXTERNAL HOSTING !!!
+        // To generate strictly sequential order numbers (1001, 1002...), you MUST connect a database.
+        // 1. Go to https://console.firebase.google.com/
+        // 2. Create a new project (it's free).
+        // 3. Register a "Web App" in the project settings.
+        // 4. Copy the "firebaseConfig" object they give you.
+        // 5. Paste it inside the 'manualConfig' variable below.
         
-        // --- EMAILJS CONFIGURATION ---
+        const manualConfig = {
+            // apiKey: "YOUR_API_KEY",
+            // authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            // projectId: "YOUR_PROJECT_ID",
+            // storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            // messagingSenderId: "...",
+            // appId: "..."
+        };
+
+        let firebaseConfig = {};
+        let appId = 'purple-oven-app';
+        let isFirebaseAvailable = false;
+        let app, auth, db;
+
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                // Running in Canvas Environment (Automatic)
+                firebaseConfig = JSON.parse(__firebase_config);
+                appId = typeof __app_id !== 'undefined' ? __app_id : appId;
+                isFirebaseAvailable = true;
+            } else if (manualConfig.apiKey) {
+                // Running Externally (GitHub/Local) with Manual Config
+                firebaseConfig = manualConfig;
+                isFirebaseAvailable = true;
+            }
+
+            if (isFirebaseAvailable) {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            } else {
+                console.warn("Firebase Config missing. Order IDs will be timestamp-based instead of sequential.");
+            }
+        } catch (e) {
+            console.warn("Error initializing Firebase:", e);
+            isFirebaseAvailable = false;
+        }
+
+        // --- EmailJS Configuration ---
         const EMAILJS_PUBLIC_KEY = "zipf8D6huE9iUliyx"; 
         const EMAILJS_SERVICE_ID = "service_ovc10mr";
         const EMAILJS_TEMPLATE_ID = "template_99fgo0t";
 
-        // Initialize EmailJS
-        (function() {
-            if(EMAILJS_PUBLIC_KEY && window.emailjs){
-                emailjs.init(EMAILJS_PUBLIC_KEY);
-            }
-        })();
-        
+        if(window.emailjs) emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        // --- App State ---
         let state = {
             view: 'landing', 
-            selectedBrand: 'PurpleOven',
-            lastSubmittedFormData: null,
             isSubmitting: false,
-            lastOrderDetails: null // New property to store final order details
+            lastOrderDetails: null,
+            user: null
         };
 
-        // --- MENU DATA ---
+        const initAuth = async () => {
+            if (!isFirebaseAvailable) return;
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                console.error("Auth failed:", e);
+            }
+        };
+        initAuth();
+        if (isFirebaseAvailable) {
+            onAuthStateChanged(auth, (user) => { state.user = user; });
+        }
+
+        // --- Sequential ID Logic ---
+        async function getOrderNumber() {
+            // Generate a time-based ID using Hong Kong Time (UTC+8)
+            const now = new Date();
+            
+            // Convert current local time to UTC, then add 8 hours for HK/PH time
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const hkTime = new Date(utc + (3600000 * 8));
+
+            const year = hkTime.getFullYear();
+            const month = String(hkTime.getMonth() + 1).padStart(2, '0');
+            const day = String(hkTime.getDate()).padStart(2, '0');
+            const hours = String(hkTime.getHours()).padStart(2, '0');
+            const minutes = String(hkTime.getMinutes()).padStart(2, '0');
+            const seconds = String(hkTime.getSeconds()).padStart(2, '0');
+            
+            // Add milliseconds (2 digits) to ensure uniqueness if multiple orders come in at the same second
+            const ms = String(hkTime.getMilliseconds()).padStart(3, '0').substring(0, 2);
+
+            // Format: YYYYMMDD-HHMMSSms (e.g., 20251225-14300512)
+            return `${year}${month}${day}-${hours}${minutes}${seconds}${ms}`;
+        }
+
+        // --- Data ---
         const purpleOvenMenuData = [
             {
                 category: "Cakes",
                 subCategories: [
-                    {
-                        name: "Light Cakes (8 In)",
-                        items: [
-                            { name: "Honeycomb Crunch Cake - whole" },
-                            { name: "Pistachio Stardust - whole" },
-                            { name: "Chocolate Honeycomb Crunch Cake - whole" },
-                            { name: "Strawberry Kisses - whole" }
-                        ]
-                    },
-                    {
-                        name: "Cakes with Nutty Layers (8 In)",
-                        items: [
-                            { name: "Classic Sans Rival - whole" },
-                            { name: "Dark Mocha Sans Rival - whole" },
-                            { name: "White Chocolate Sans Rival - whole" },
-                            { name: "Rustic Chocolate Torte - whole" },
-                            { name: "Merry Cherry Torte - whole" },
-                            { name: "Mango Walnut Torte - whole" },
-                            { name: "Lemon Torte - whole" }
-                        ]
-                    },
-                    {
-                        name: "Chocolate Cakes (8 In)",
-                        items: [
-                            { name: "Grandma’s Chocolate Cake - whole" },
-                            { name: "Chocolate Dome Cake - whole" },
-                            { name: "Chocolate Campfire - whole" },
-                            { name: "Classic Chocolate Cake - whole" },
-                            { name: "Caramel Sauce - whole" }
-                        ]
-                    },
-                    {
-                        name: "Cheesecakes (8 In)",
-                        items: [
-                            { name: "New York Cheesecake - whole" },
-                            { name: "Blueberry Cheesecake - whole" },
-                            { name: "Oreo Cheesecake - whole" }
-                        ]
-                    },
-                    {
-                        name: "Tub Desserts (8x14 In)",
-                        items: [
-                            { name: "Tiramisu - whole" },
-                            { name: "Strawberries and Cream - whole" }
-                        ]
-                    },
-                    {
-                        name: "Pies (9 In)",
-                        items: [
-                            { name: "Apple Crumb Pie - whole" },
-                            { name: "Banoffee Pie - whole" }
-                        ]
-                    },
-                    {
-                        name: "Little Cakes and Pies",
-                        items: [
-                            { name: "Little Carrot Cake - pc" },
-                            { name: "Chocolate Lava Cake - pc" },
-                            { name: "Little Banoffee Pie - pc" },
-                            { name: "Little Apple Crumb Pie - pc" },
-                            { name: "Little Pecan Pie - pc" }
-                        ]
-                    }
+                    { name: "Light Cakes (8 In)", items: [{ name: "Honeycomb Crunch Cake - whole" }, { name: "Pistachio Stardust - whole" }, { name: "Chocolate Honeycomb Crunch Cake - whole" }, { name: "Strawberry Kisses - whole" }] },
+                    { name: "Cakes with Nutty Layers (8 In)", items: [{ name: "Classic Sans Rival - whole" }, { name: "Dark Mocha Sans Rival - whole" }, { name: "White Chocolate Sans Rival - whole" }, { name: "Rustic Chocolate Torte - whole" }, { name: "Merry Cherry Torte - whole" }, { name: "Mango Walnut Torte - whole" }, { name: "Lemon Torte - whole" }] },
+                    { name: "Chocolate Cakes (8 In)", items: [{ name: "Grandma’s Chocolate Cake - whole" }, { name: "Chocolate Dome Cake - whole" }, { name: "Chocolate Campfire - whole" }, { name: "Classic Chocolate Cake - whole" }, { name: "Caramel Sauce - whole" }] },
+                    { name: "Cheesecakes (8 In)", items: [{ name: "New York Cheesecake - whole" }, { name: "Blueberry Cheesecake - whole" }, { name: "Oreo Cheesecake - whole" }] },
+                    { name: "Tub Desserts (8x14 In)", items: [{ name: "Tiramisu - whole" }, { name: "Strawberries and Cream - whole" }] },
+                    { name: "Pies (9 In)", items: [{ name: "Apple Crumb Pie - whole" }, { name: "Banoffee Pie - whole" }] },
+                    { name: "Little Cakes and Pies", items: [{ name: "Little Carrot Cake - pc" }, { name: "Chocolate Lava Cake - pc" }, { name: "Little Banoffee Pie - pc" }, { name: "Little Apple Crumb Pie - pc" }, { name: "Little Pecan Pie - pc" }] }
                 ]
             },
             {
                 category: "Bars",
-                subCategories: [
-                    {
-                        name: "",
-                        items: [
-                            { name: "Mango Bars Half - 16pc" },
-                            { name: "Mango Bars Whole - 32pc" },
-                            { name: "Lemon Bars Half - 16pc" },
-                            { name: "Lemon Bars Whole - 32pc" },
-                            { name: "Double Chocolate Brownies Half - 16pc" },
-                            { name: "Double Chocolate Brownies Whole - 32pc" },
-                            { name: "Fudge Brownies Half - 16pc" },
-                            { name: "Fudge Brownies Whole - 32pc" },
-                            { name: "Food for the Gods Half - 16pc" },
-                            { name: "Food for the Gods Whole - 32pc" },
-                            { name: "Chocolate Revel Bars Half - 16pc" },
-                            { name: "Chocolate Revel Bars Whole - 32pc" }
-                        ]
-                    }
-                ]
+                subCategories: [{ name: "", items: [{ name: "Mango Bars Half - 16pc" }, { name: "Mango Bars Whole - 32pc" }, { name: "Lemon Bars Half - 16pc" }, { name: "Lemon Bars Whole - 32pc" }, { name: "Double Chocolate Brownies Half - 16pc" }, { name: "Double Chocolate Brownies Whole - 32pc" }, { name: "Fudge Brownies Half - 16pc" }, { name: "Fudge Brownies Whole - 32pc" }, { name: "Food for the Gods Half - 16pc" }, { name: "Food for the Gods Whole - 32pc" }, { name: "Chocolate Revel Bars Half - 16pc" }, { name: "Chocolate Revel Bars Whole - 32pc" }] }]
             },
             {
                 category: "Cookies",
-                subCategories: [
-                    {
-                        name: "",
-                        items: [
-                            { name: "Chocolate Macadamia Cookie - pc" },
-                            { name: "White Chocolate Cashew Cookie - pc" },
-                            { name: "Chocolate Dipped Cookie - pc" },
-                            { name: "Double Chocolate Chip Cookie - pc" },
-                            { name: "Reese’s Peanut Butter Chip Cookie - pc" },
-                            { name: "White Chunk Chocolate Cookie - pc" },
-                            { name: "Oatmeal Raisin Cookie - pc" },
-                            { name: "Chocolate Crinkles - box of 12" }
-                        ]
-                    }
-                ]
+                subCategories: [{ name: "", items: [{ name: "Chocolate Macadamia Cookie - pc" }, { name: "White Chocolate Cashew Cookie - pc" }, { name: "Chocolate Dipped Cookie - pc" }, { name: "Double Chocolate Chip Cookie - pc" }, { name: "Reese’s Peanut Butter Chip Cookie - pc" }, { name: "White Chunk Chocolate Cookie - pc" }, { name: "Oatmeal Raisin Cookie - pc" }, { name: "Chocolate Crinkles - box of 12" }] }]
             },
             {
                 category: "Loaves",
-                subCategories: [
-                    {
-                        name: "",
-                        items: [
-                            { name: "Banana Loaf - loaf" },
-                            { name: "Carrot Walnut Loaf - loaf" },
-                            { name: "Orange Almond Loaf - loaf" },
-                            { name: "Pistachio Lime Loaf - loaf" },
-                            { name: "Chocolate Banana Walnut Loaf - loaf" }
-                        ]
-                    }
-                ]
+                subCategories: [{ name: "", items: [{ name: "Banana Loaf - loaf" }, { name: "Carrot Walnut Loaf - loaf" }, { name: "Orange Almond Loaf - loaf" }, { name: "Pistachio Lime Loaf - loaf" }, { name: "Chocolate Banana Walnut Loaf - loaf" }] }]
             },
             {
                 category: "Snack Packs",
-                subCategories: [
-                    {
-                        name: "",
-                        items: [
-                            { name: "Chocolate Carousel - pack" },
-                            { name: "Purple Crumble - pack" }
-                            ]
-                    }
-                ]
+                subCategories: [{ name: "", items: [{ name: "Chocolate Carousel - pack" }, { name: "Purple Crumble - pack" }] }]
             },
             {
                 category: "Bread and Pastries",
                 subCategories: [
-                    {
-                        name: "Quiches",
-                        items: [
-                            { name: "Broccoli and Cheese Quiche - pc" },
-                            { name: "Quiche Lorraine - pc" }
-                        ]
-                    },
-                    {
-                        name: "Flaky Pastries",
-                        items: [
-                            { name: "Chicken Curry Turnover - pc" },
-                            { name: "Chili con Carne Turnover - pc" },
-                            { name: "Chorizo Roll - pc" },
-                            { name: "Sausage Puff - pc" },
-                            { name: "Spinach Danish - pc" },
-                            { name: "Tuna Turnover - pc" }
-                        ]
-                    },
-                    {
-                        name: "Soft Savory Buns",
-                        items: [
-                            { name: "Adobo Flakes Bun - pc" },
-                            { name: "Pork Asado Bun - pc" },
-                            { name: "Corned Beef Bun - pc" },
-                            { name: "Tuna Bun - pc" },
-                            { name: "Ham and Cheese Bun - pc" },
-                            { name: "Sausage Bun - pc" }
-                        ]
-                    },
-                    {
-                        name: "Croissants",
-                        items: [
-                            { name: "Butter Croissant - pc" },
-                            { name: "Ham and Cheese Croissant - pc" },
-                            { name: "Chocolate Croissant - pc" }
-                        ]
-                    },
-                    {
-                        name: "Sweet Breads",
-                        items: [
-                            { name: "Cheese Roll - pc" },
-                            { name: "Ensaymada - pc" },
-                            { name: "Soft Cinnamon Roll - pc" }
-                        ]
-                    },
-                    {
-                        name: "Artisan Breads",
-                        items: [
-                            { name: "Cinnamon Raisin Pretzel - pc" },
-                            { name: "Parmesan Pretzel - pc" },
-                            { name: "Sourdough - loaf" },
-                            { name: "Raisin Bread - loaf" }
-                        ]
-                    }
+                    { name: "Quiches", items: [{ name: "Broccoli and Cheese Quiche - pc" }, { name: "Quiche Lorraine - pc" }] },
+                    { name: "Flaky Pastries", items: [{ name: "Chicken Curry Turnover - pc" }, { name: "Chili con Carne Turnover - pc" }, { name: "Chorizo Roll - pc" }, { name: "Sausage Puff - pc" }, { name: "Spinach Danish - pc" }, { name: "Tuna Turnover - pc" }] },
+                    { name: "Soft Savory Buns", items: [{ name: "Adobo Flakes Bun - pc" }, { name: "Pork Asado Bun - pc" }, { name: "Corned Beef Bun - pc" }, { name: "Tuna Bun - pc" }, { name: "Ham and Cheese Bun - pc" }, { name: "Sausage Bun - pc" }] },
+                    { name: "Croissants", items: [{ name: "Butter Croissant - pc" }, { name: "Ham and Cheese Croissant - pc" }, { name: "Chocolate Croissant - pc" }] },
+                    { name: "Sweet Breads", items: [{ name: "Cheese Roll - pc" }, { name: "Ensaymada - pc" }, { name: "Soft Cinnamon Roll - pc" }] },
+                    { name: "Artisan Breads", items: [{ name: "Cinnamon Raisin Pretzel - pc" }, { name: "Parmesan Pretzel - pc" }, { name: "Sourdough - loaf" }, { name: "Raisin Bread - loaf" }] }
                 ]
             },
             {
                 category: "Reusable Bag",
-                subCategories: [
-                    {
-                        name: "",
-                        items: [
-                            { name: "Large Bag - pc" },
-                            { name: "Small Bag - pc" }
-                        ]
-                    }
-                ]
+                subCategories: [{ name: "", items: [{ name: "Large Bag - pc" }, { name: "Small Bag - pc" }] }]
             }
         ];
 
-        const brands = {
-            PurpleOven: {
-                theme: 'purple-white',
-                description: ``,
-                logo: PO_LOGO_URL,
-                menuFiles: Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`)
-            }
-        };
-        
-        const timeSlots = Array.from({ length: 11 }, (_, i) => `${(i + 9) % 12 === 0 ? 12 : (i + 9) % 12} ${i + 9 < 12 ? 'AM' : 'PM'}`).slice(0, 11); 
-        
-        const pickUpLocations = [
-            'Pasig - Portico',
-            'Makati - San Antonio Plaza Arcade',
-            'Makati - Legaspi Street',
-            'Makati - Sacred Heart Street',
-            'Quezon City - Temple Drive',
-            'Quezon City - Scout Rallos',
-            'Alabang - Alabang Town Center',
-            'San Juan - Santolan Town Plaza',
-            'Laguna - Santa Rosa'
-        ];
-        
-        // --- View Navigation ---
+        const pickUpLocations = ['Pasig - Portico', 'Makati - San Antonio Plaza Arcade', 'Makati - Legaspi Street', 'Makati - Sacred Heart Street', 'Quezon City - Temple Drive', 'Quezon City - Scout Rallos', 'Alabang - Alabang Town Center', 'San Juan - Santolan Town Plaza', 'Laguna - Santa Rosa'];
+        const timeSlots = Array.from({ length: 11 }, (_, i) => `${(i + 9) % 12 === 0 ? 12 : (i + 9) % 12} ${i + 9 < 12 ? 'AM' : 'PM'}`).slice(0, 11);
 
-        function showLanding() {
-            state.view = 'landing';
-            state.selectedBrand = 'PurpleOven';
-            render();
+        // --- App Loop ---
+        function render() {
+            const root = document.getElementById('app');
+            if (state.view === 'landing') root.innerHTML = renderLanding();
+            else if (state.view === 'menu') root.innerHTML = renderMenu();
+            else if (state.view === 'order_form') renderOrderForm();
+            else if (state.view === 'success') root.innerHTML = renderSuccess();
             window.scrollTo(0,0);
         }
 
-        function showMenu(brand) {
-            state.view = 'menu';
-            state.selectedBrand = brand;
-            render();
-            window.scrollTo(0,0);
-        }
-
-        function showOrder() {
-            state.view = 'order_form';
-            // Clear last form data when starting a new order
-            state.lastSubmittedFormData = null; 
-            render();
-            window.scrollTo(0,0);
-        }
-
-        function showSuccess() {
-            state.view = 'success';
-            render();
-            window.scrollTo(0,0);
-        }
-
-        // --- HTML Rendering ---
+        window.showLanding = () => { state.view = 'landing'; render(); };
+        window.showMenu = () => { state.view = 'menu'; render(); };
+        window.showOrder = () => { state.view = 'order_form'; render(); };
 
         function renderLanding() {
-            APP_ROOT.classList.add('justify-center');
             return `
                 <div class="text-center animate-fadeIn w-full max-w-2xl flex flex-col items-center">
-                    <img src="${PO_LOGO_URL}" onerror="this.src='https://placehold.co/300x100/5D3FD3/fff?text=Purple+Oven'"
-                        alt="Purple Oven Logo" class="mx-auto mb-6 h-auto max-h-[200px] w-auto object-contain">
-                    
+                    <img src="${PO_LOGO_URL}" alt="Purple Oven" class="mx-auto mb-6 h-auto max-h-[200px] w-auto">
                     <p class="text-xl text-gray-600 mb-10 max-w-xl leading-relaxed">
-                         At Purple Oven, we bake<br>
-                         all day everyday with<br>
-                         real eggs, cream, and butter.<br>
-                         And we serve them while<br>
-                         they’re at their best.<br>
-                         It makes us happy to<br>
-                         have you bring home<br>
-                         the freshest and finest<br>
-                         products we can offer.
+                        At Purple Oven, we bake all day everyday with real eggs, cream, and butter. 
+                        And we serve them while they’re at their best. 
+                        It makes us happy to have you bring home the freshest and finest products we can offer.
                     </p>
-
-                    <button onclick="showMenu('PurpleOven')"
-                            class="px-10 py-4 text-lg font-semibold text-white rounded-full transition duration-300 shadow-lg bg-purple-oven hover:bg-indigo-700 transform hover:scale-105">
+                    <button onclick="showMenu()" class="px-10 py-4 text-lg font-semibold text-white rounded-full bg-purple-oven hover:bg-indigo-700 transition shadow-lg transform hover:scale-105">
                         See Our Menu
                     </button>
                 </div>
             `;
         }
 
-        function renderMenu(brand) {
-            APP_ROOT.classList.remove('justify-center');
-            const data = brands[brand];
-            const themeClass = 'text-purple-oven border-purple-oven';
-            const buttonClass = 'bg-purple-oven hover:bg-indigo-700';
-
-            const menuContent = `
-                <div class="flex justify-center items-center mb-6">
-                    <img src="${data.logo}"
-                            onerror="this.src='https://placehold.co/80x80/5D3FD3/fff?text=${brand}'"
-                            alt="${brand} Logo" class="h-20 w-20 object-contain mx-auto">
-                </div>
-
-                <div class="h-[calc(100vh-280px)] max-h-[80vh] w-full border ${themeClass} rounded-xl overflow-y-auto menu-scroll shadow-inner bg-gray-50">
-                    <div class="space-y-4 p-2">
-                        ${data.menuFiles.map(file => `
-                            <img src="${file}" 
-                                 alt="Menu Page" 
-                                 class="w-full h-auto object-contain rounded-lg shadow-sm border border-gray-100 min-h-[200px] bg-gray-50"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/600x800/f3f4f6/9ca3af?text=Image+Not+Found:\\n${file}'; this.style.objectFit='contain';">
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="mt-8 flex justify-between items-center">
-                    <!-- Updated: Added pill shape styling -->
-                    <button onclick="showLanding()" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition duration-150">
-                        ← Back to Home
-                    </button>
-                    <button onclick="showOrder()"
-                            class="px-6 py-2 text-base font-semibold text-white rounded-full transition duration-300 shadow-md ${buttonClass} shadow-lg">
-                        Order Now
-                    </button>
-                </div>
-            `;
+        function renderMenu() {
+            const menuFiles = Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`);
             return `
-                <div class="w-full max-w-4xl animate-fadeIn">
-                    <div class="p-4 sm:p-8 bg-white rounded-2xl shadow-2xl border ${themeClass} transition duration-300">
-                        ${menuContent}
+                <div class="w-full max-w-4xl animate-fadeIn p-4 sm:p-8 bg-white rounded-2xl shadow-2xl border border-purple-oven">
+                    <div class="flex justify-center mb-6"><img src="${PO_LOGO_URL}" alt="Logo" class="h-20 w-auto"></div>
+                    <div class="h-[70vh] border border-purple-oven rounded-xl overflow-y-auto menu-scroll bg-gray-50 p-2">
+                        ${menuFiles.map(f => `<img src="${f}" class="w-full mb-4 rounded-lg" onerror="this.style.display='none'">`).join('')}
+                    </div>
+                    <div class="mt-8 flex justify-between items-center">
+                        <button onclick="showLanding()" class="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition">← Back to Home</button>
+                        <button onclick="showOrder()" class="px-8 py-2 font-semibold text-white rounded-full bg-purple-oven hover:bg-indigo-700 transition shadow-lg">Order Now</button>
                     </div>
                 </div>
             `;
-        }
-        
-        function renderSuccess() {
-            APP_ROOT.classList.add('justify-center');
-            
-            // Reverting to the simple confirmation page requested previously
-            const details = state.lastOrderDetails || {};
-            const orderIdDisplay = details.order_id ? `<p class="text-sm text-gray-400 mb-4">Order ID: ${details.order_id}</p>` : '';
-
-            return `
-                <div class="text-center animate-fadeIn w-full max-w-xl flex flex-col items-center bg-white p-10 rounded-2xl shadow-2xl border border-gray-100">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Order Sent!</h2>
-                    ${orderIdDisplay}
-                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                        Please expect a call from us before 6pm to confirm your order. Thank you.
-                    </p>
-                    
-                    <button onclick="showLanding()" class="px-6 py-2 bg-purple-oven text-white font-medium rounded-full hover:bg-indigo-700 transition duration-300">
-                        Return to Home
-                    </button>
-                </div>
-            `;
-        }
-
-        // --- Form Functions ---
-
-        function toggleQuantity(checkbox) {
-            const qtyInputId = `qty_${checkbox.id}`;
-            const qtyInput = document.getElementById(qtyInputId);
-            if (qtyInput) {
-                qtyInput.disabled = !checkbox.checked;
-                if (checkbox.checked) {
-                    qtyInput.focus();
-                    qtyInput.value = '1';
-                } else {
-                    qtyInput.value = '';
-                }
-            }
-        }
-        
-        function handleOrderTypeChange(type) {
-            const pickupSelect = document.getElementById('pickupSelect');
-            const deliveryNoticeContainer = document.getElementById('deliveryNoticeContainer');
-            const deliveryInput = document.getElementById('deliveryInput');
-            const landmarkInput = document.getElementById('landmarkInput');
-            const locationLabel = document.getElementById('locationLabel');
-            const giftSection = document.getElementById('giftSection');
-
-            if (type === 'Pick Up') {
-                pickupSelect.classList.remove('hidden');
-                pickupSelect.required = true;
-                
-                deliveryNoticeContainer.classList.add('hidden');
-                
-                deliveryInput.classList.add('hidden');
-                deliveryInput.required = false;
-                landmarkInput.classList.add('hidden');
-                giftSection.classList.add('hidden');
-                
-                locationLabel.innerText = 'Store Location *';
-                deliveryInput.value = ''; 
-            } else {
-                pickupSelect.classList.add('hidden');
-                pickupSelect.required = false;
-                
-                deliveryNoticeContainer.classList.remove('hidden');
-                
-                deliveryInput.classList.remove('hidden');
-                deliveryInput.required = true;
-                landmarkInput.classList.remove('hidden');
-                giftSection.classList.remove('hidden');
-                
-                locationLabel.innerText = 'Delivery Address *';
-                pickupSelect.selectedIndex = 0; 
-            }
-        }
-
-        function toggleGiftFields(checkbox) {
-            const recipientFields = document.getElementById('recipientFields');
-            const nameInput = recipientFields.querySelector('input[name="recipientName"]');
-            const mobileInput = recipientFields.querySelector('input[name="recipientMobile"]');
-
-            if (checkbox.checked) {
-                recipientFields.classList.remove('hidden');
-                nameInput.required = true;
-                mobileInput.required = true;
-            } else {
-                recipientFields.classList.add('hidden');
-                nameInput.required = false;
-                mobileInput.required = false;
-                nameInput.value = '';
-                mobileInput.value = '';
-            }
-        }
-
-        // Generate a unique ID based on timestamp (better than localStorage for web)
-        function getNextOrderNumber() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const randomSuffix = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            
-            // Format: YYYYMMDD-RAND
-            return `${year}${mm}${dd}-${randomSuffix}`;
-        }
-        
-        function checkItemSelection() {
-             const checkboxes = document.querySelectorAll('input[name="orderItem"]:checked');
-             let selectedCount = 0;
-
-             checkboxes.forEach(cb => {
-                const qtyInputId = `qty_${cb.id}`;
-                const qtyVal = parseInt(document.getElementById(qtyInputId).value || '0');
-                if (qtyVal > 0) {
-                    selectedCount++;
-                }
-            });
-            return selectedCount;
-        }
-
-        function renderPurpleOvenMenuSelection() {
-            let html = '';
-            // Updated instruction text
-            html += `<p class="text-sm text-gray-500 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-100">Please check on the product(s) of your choice and indicate the quantity to order.</p>`;
-            html += `<div id="itemErrorContainer" class="mb-4 text-red-500 text-sm font-semibold"></div>`;
-
-            const renderItemFields = (items, catIndex, subCatIndex) => {
-                return items.map((item, itemIndex) => {
-                    const itemId = `item_${catIndex}_${subCatIndex}_${itemIndex}`;
-                    
-                    const parts = item.name.split(" - ");
-                    let itemName = parts[0];
-                    let itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : "";
-
-                    return `<div class="grid grid-cols-[20px_1fr_48px_70px] sm:grid-cols-[20px_1fr_48px_100px] gap-2 sm:gap-4 items-center py-2 border-b border-gray-200 last:border-0">
-                                <!-- Checkbox -->
-                                <div class="flex items-center justify-center h-full">
-                                    <input type="checkbox" id="${itemId}" name="orderItem" value="${item.name}" 
-                                        onchange="toggleQuantity(this)"
-                                        class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 cursor-pointer border-gray-300">
-                                </div>
-                                
-                                <!-- Name -->
-                                <label for="${itemId}" class="text-sm text-gray-700 font-medium cursor-pointer leading-tight select-none">
-                                    ${itemName}
-                                </label>
-                                
-                                <!-- Qty -->
-                                <div>
-                                    <input type="number" id="qty_${itemId}" name="itemQty" min="1" placeholder="0" disabled
-                                        class="w-full text-center border border-gray-300 rounded px-1 py-1 text-sm focus:outline-none focus:border-purple-500 disabled:bg-gray-100 disabled:text-gray-400">
-                                </div>
-                                
-                                <!-- Unit -->
-                                <div class="text-xs text-gray-400 text-right pr-2">
-                                    ${itemUnit}
-                                </div>
-                            </div>`;
-                }).join('');
-            };
-
-            purpleOvenMenuData.forEach((category, catIndex) => {
-                const isBreadAndPastries = category.category === "Bread and Pastries";
-                const isUnnamedSubCategories = category.subCategories.length === 1 && category.subCategories[0].name === "";
-
-                // Main category is initially collapsed (no 'open' attribute)
-                html += `<div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">`;
-                html += `
-                    <details class="group">
-                        <summary class="flex justify-between items-center cursor-pointer p-4 bg-gray-50 hover:bg-purple-50 transition-colors">
-                            <h3 class="text-lg font-bold text-purple-oven">${category.category}</h3>
-                            <span class="summary-icon text-purple-oven transform transition-transform duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </span>
-                        </summary>
-                        <div class="p-4 bg-white border-t border-gray-100 animate-fadeIn space-y-3">
-                            ${isBreadAndPastries ? `
-                                <p class="text-xs text-gray-500 bg-gray-100 p-2 rounded-lg border border-gray-200">
-                                    * Orders of 6 to 7 pieces will be packed in a box.
-                                </p>
-                            ` : ''}
-                `;
-                
-                category.subCategories.forEach((subCat, subCatIndex) => {
-                    // Sub-categories are also initially collapsed (no 'open' attribute)
-                    if (subCat.name) {
-                        // Applying island look to named sub-categories (Cakes > Light Cakes)
-                        html += `
-                            <details class="group/sub mb-3 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden">
-                                <summary class="flex items-center cursor-pointer p-3 hover:bg-gray-100 rounded-lg select-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 mr-2 transform transition-transform duration-200 summary-icon" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                    </svg>
-                                    <h4 class="text-md font-semibold text-gray-800">${subCat.name}</h4>
-                                </summary>
-                                <!-- Content padding adjusted, remove inner decorative border -->
-                                <div class="px-3 pb-3 pt-0 border-t border-gray-200">
-                                    ${renderItemFields(subCat.items, catIndex, subCatIndex)}
-                                </div>
-                            </details>
-                        `;
-                    } else {
-                        // For categories without sub-names (Bars, Cookies, Loaves, Snack Packs, Reusable Bag)
-                        // Rendering as a white "window" with a thin border.
-                        html += `<div class="bg-white p-3 rounded-lg border border-gray-200 mb-3 last:mb-0">`;
-                        html += renderItemFields(subCat.items, catIndex, subCatIndex);
-                        html += `</div>`;
-                    }
-                });
-
-                html += `</div></details></div>`;
-            });
-
-            return html;
         }
 
         function renderOrderForm() {
-            APP_ROOT.classList.remove('justify-center');
-            
-            // Removed logo and moved title outside the form container
-            const formHtml = `
+            const root = document.getElementById('app');
+            root.innerHTML = `
                 <div class="w-full max-w-4xl animate-fadeIn">
-                    
-                    <!-- Added Logo Block -->
-                    <div class="flex justify-center mb-6">
-                        <img src="${PO_LOGO_URL}" onerror="this.src='https://placehold.co/100x40/5D3FD3/fff?text=Purple+Oven'"
-                            alt="Purple Oven Logo" class="h-16 w-auto object-contain">
+                    <div class="flex justify-center mb-6"><img src="${PO_LOGO_URL}" alt="Logo" class="h-16 w-auto"></div>
+                    <div class="relative w-full mb-6 flex flex-col items-center">
+                        <button onclick="showMenu()" class="sm:absolute left-0 top-0 px-4 py-1 text-sm text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition mb-4 sm:mb-0">← Back to Menu</button>
+                        <h2 class="text-3xl font-normal text-gray-900">How to Order</h2>
                     </div>
-
-                    <!-- Title and Back Button (Outside the form window) -->
-                    <div class="relative w-full mb-6 px-2 sm:px-0">
-                        <!-- Back to Menu (Upper Left) - Updated to pill button style -->
-                        <button type="button" onclick="showMenu('PurpleOven')" class="absolute left-0 top-0 px-4 py-1 text-sm text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition duration-150">
-                            ← Back to Menu
-                        </button>
-                        <!-- How to Order Title (Centered and not bold) -->
-                        <h2 class="text-3xl text-center font-normal text-gray-900">How to Order</h2>
-                    </div>
-
-                    <form id="orderForm" onsubmit="submitOrder(event)" class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                        
-                        <!-- Office Hours & Methods (Now black title and distinct windows) -->
-                        <div class="p-6 sm:p-8 border-b border-gray-100 bg-gray-50">
-                            <h3 class="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">Office Hours</h3>
-                            <p class="text-gray-700 text-sm mb-6">Our team is available to assist you with, receive, and facilitate your order daily from 9AM to 6PM.</p>
-                            
-                            <div class="flex flex-col gap-6">
-                                <!-- Option 1: Call Us (Slightly darker purple window) -->
-                                <div class="bg-purple-100/50 p-4 rounded-lg border border-purple-200 shadow-inner w-full">
-                                    <h4 class="font-bold text-purple-800 mb-2">Option 1: Call Us</h4>
-                                    <p class="text-sm text-gray-700 mb-3">For orders today, please give us a call.</p>
-                                    <div class="space-y-1 text-sm font-medium">
-                                        <p>
-                                            <span class="text-gray-500">Landline:</span> 
-                                            <!-- Enhanced link style for clarity -->
-                                            <a href="tel:+63286314221" class="text-purple-700 font-bold hover:underline bg-purple-200/50 p-1 rounded-md transition-colors inline-block">
-                                                +632 8631 4221
-                                            </a>
-                                        </p>
-                                        <p>
-                                            <span class="text-gray-500">Mobile / Viber:</span> 
-                                            <!-- Enhanced link style for clarity -->
-                                            <a href="tel:+639177103227" class="text-purple-700 font-bold hover:underline bg-purple-200/50 p-1 rounded-md transition-colors inline-block">
-                                                +63917 710 3227
-                                            </a>
-                                        </p>
+                    <form id="orderForm" class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                        <div class="p-6 bg-gray-50 border-b">
+                            <h3 class="text-xl font-bold mb-4">Office Hours</h3>
+                            <p class="text-sm text-gray-600 mb-6">Our team is available to assist you with, receive, and facilitate your order daily from 9AM to 6PM.</p>
+                            <div class="space-y-4">
+                                <div class="bg-purple-100/50 p-4 rounded-lg border border-purple-200 shadow-inner">
+                                    <h4 class="font-bold text-purple-800">Option 1: Call Us</h4>
+                                    <p class="text-sm mb-2">For orders today, please give us a call.</p>
+                                    <div class="text-sm space-y-1">
+                                        <p><span class="font-semibold text-gray-600">Landline:</span> <a href="tel:+63286314221" class="font-bold text-purple-700 hover:underline">+632 8631 4221</a></p>
+                                        <p><span class="font-semibold text-gray-600">Mobile / Viber:</span> <a href="tel:+639177103227" class="font-bold text-purple-700 hover:underline">+63917 710 3227</a></p>
                                     </div>
                                 </div>
-                                <!-- Option 2: Order Online (Slightly darker purple window) -->
-                                <div class="bg-purple-100/50 p-4 rounded-lg border border-purple-200 shadow-inner w-full">
-                                    <h4 class="font-bold text-purple-800 mb-2">Option 2: Order Online</h4>
-                                    <p class="text-sm text-gray-700">For orders from tomorrow onwards, please provide us with the details below. We will contact you as soon as we can confirm your order.</p>
+                                <div class="bg-purple-100/50 p-4 rounded-lg border border-purple-200 shadow-inner">
+                                    <h4 class="font-bold text-purple-800">Option 2: Order Online</h4>
+                                    <p class="text-sm">For orders from tomorrow onwards, please provide us with the details below. We will contact you as soon as we can confirm your order.</p>
                                 </div>
                             </div>
                         </div>
-
                         <div class="p-6 sm:p-10 space-y-8">
-                            
-                            <!-- Customer Details -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Customer Details</h3>
-                                <!-- Removed customerSocial input field (Facebook/Instagram) -->
+                                <h3 class="font-bold border-b pb-2">Customer Details</h3>
                                 <div class="form-grid">
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Full Name *</label>
-                                        <input type="text" name="customerName" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Mobile Number *</label>
-                                        <input type="tel" name="customerMobile" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Email Address *</label>
-                                        <input type="email" name="customerEmail" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    
+                                    <input type="text" name="customerName" placeholder="Full Name *" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    <input type="tel" name="customerMobile" placeholder="Mobile Number *" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    <input type="email" name="customerEmail" placeholder="Email Address *" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500">
                                 </div>
                             </div>
-
-                            <!-- Order Details (Updated Title) -->
                             <div class="space-y-4">
-                                <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Delivery / Pick Up</h3>
-                                
-                                <div class="flex gap-6 mb-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="orderType" value="Pick Up" checked onchange="handleOrderTypeChange('Pick Up')" class="text-purple-600 focus:ring-purple-500 h-5 w-5">
-                                        <span class="font-medium">Pick Up</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="orderType" value="Delivery" onchange="handleOrderTypeChange('Delivery')" class="text-purple-600 focus:ring-purple-500 h-5 w-5">
-                                        <span class="font-medium">Delivery</span>
+                                <h3 class="font-bold border-b pb-2">Delivery / Pick Up</h3>
+                                <div class="flex gap-6">
+                                    <label><input type="radio" name="orderType" value="Pick Up" checked class="h-5 w-5 text-purple-600"> Pick Up</label>
+                                    <label class="text-gray-400 cursor-not-allowed flex items-center gap-2">
+                                        <input type="radio" name="orderType" value="Delivery" class="h-5 w-5 text-gray-300" disabled> 
+                                        Delivery (Temporarily Unavailable)
                                     </label>
                                 </div>
-
-                                <!-- Delivery Notice -->
-                                <div id="deliveryNoticeContainer" class="notice-box p-4 hidden">
-                                    <p class="text-sm text-gray-700">
-                                        We can arrange for delivery to your home, within Metro Manila. Please provide the delivery details below.
-                                    </p>
+                                <select id="pickupSelect" name="pickupLocation" class="w-full p-3 border rounded-lg"><option value="" disabled selected>Select branch...</option>${pickUpLocations.map(l => `<option value="${l}">${l}</option>`).join('')}</select>
+                                <div id="deliveryFields" class="hidden space-y-2">
+                                    <input type="text" id="deliveryInput" name="deliveryAddress" placeholder="Address *" class="w-full p-3 border rounded-lg">
+                                    <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="w-full p-3 border rounded-lg">
                                 </div>
-
-                                <div class="space-y-4">
-                                    <div class="flex flex-col">
-                                        <label id="locationLabel" class="text-sm font-semibold text-gray-600 mb-1">Store Location *</label>
-                                        
-                                        <!-- Pickup Select -->
-                                        <select id="pickupSelect" name="pickupLocation" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white">
-                                            <option value="" disabled selected>Select a branch...</option>
-                                            ${pickUpLocations.map(loc => `<option value="${loc}">${loc}</option>`).join('')}
-                                        </select>
-
-                                        <!-- Delivery Input -->
-                                        <input type="text" id="deliveryInput" name="deliveryAddress" placeholder="Enter complete delivery address" class="hidden p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    
-                                    <div class="flex flex-col">
-                                        <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="hidden p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none mt-2">
-                                    </div>
+                                <div class="form-grid">
+                                    <input type="text" id="datePicker" name="orderDate" placeholder="Date *" required class="p-3 border rounded-lg bg-white">
+                                    <select name="orderTime" required class="p-3 border rounded-lg"><option value="" disabled selected>Time...</option>${timeSlots.map(t => `<option value="${t}">${t}</option>`).join('')}</select>
                                 </div>
-
-                                <div class="form-grid mt-4">
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Date *</label>
-                                        <!-- Changed type to 'text' for Flatpickr, removed inline validtion since Flatpickr handles it visually -->
-                                        <input type="text" id="datePicker" name="orderDate" required placeholder="Select Order Date..." class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white">
-                                        
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Time *</label>
-                                        <select name="orderTime" required class="p-3 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white">
-                                            <option value="" disabled selected>Select time...</option>
-                                            ${timeSlots.map(t => `<option value="${t}">${t}</option>`).join('')}
-                                        </select>
-                                    </div>
+                            </div>
+                            
+                            <div id="giftContainer" class="hidden notice-box p-4">
+                                <label class="flex items-center gap-2 font-bold"><input type="checkbox" id="giftToggle" name="isGift" class="h-5 w-5"> Is this a gift?</label>
+                                <div id="giftFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                    <input type="text" name="recipientName" placeholder="Recipient Name" class="p-2 border rounded">
+                                    <input type="tel" name="recipientMobile" placeholder="Recipient Mobile" class="p-2 border rounded">
+                                    <textarea name="dedication" placeholder="Dedication" rows="2" class="sm:col-span-2 p-2 border rounded"></textarea>
                                 </div>
                             </div>
 
-                            <!-- Gift Section -->
-                            <div id="giftSection" class="hidden p-4 option-box">
-                                <label class="flex items-center gap-2 mb-4 cursor-pointer">
-                                    <input type="checkbox" name="isGift" onchange="toggleGiftFields(this)" class="rounded text-purple-600 focus:ring-purple-500 h-5 w-5">
-                                    <span class="font-bold text-purple-900">Is this a gift?</span>
-                                </label>
-                                
-                                <div id="recipientFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Recipient Name *</label>
-                                        <input type="text" name="recipientName" class="p-2 border rounded focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Recipient Mobile *</label>
-                                        <input type="tel" name="recipientMobile" class="p-2 border rounded focus:ring-2 focus:ring-purple-500 outline-none">
-                                    </div>
-                                    <div class="col-span-1 md:col-span-2 flex flex-col">
-                                        <label class="text-sm font-semibold text-gray-600 mb-1">Dedication / Note</label>
-                                        <textarea name="dedication" rows="2" class="p-2 border rounded focus:ring-2 focus:ring-purple-500 outline-none"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Menu Items -->
                             <div>
-                                <h3 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">Select Items</h3>
-                                ${renderPurpleOvenMenuSelection()}
-                                
-                                <!-- Important Notice (Relocated and styling updated) -->
-                                <div class="bg-purple-100/50 border border-purple-200 rounded-lg p-4 mt-8">
-                                    <!-- Removed font-bold from title, Changed text-color to gray-800/700 -->
-                                    <p class="text-gray-800 text-sm mb-1">Important Notice:</p>
-                                    <p class="text-sm text-gray-700 leading-relaxed">
-                                        As we bake in limited quantities daily, please allow us to check the availability of your order. 
-                                        We shall call you as soon as we can confirm your order.
-                                    </p>
-                                </div>
+                                <h3 class="font-bold border-b pb-2 mb-4">Select Items</h3>
+                                <p class="text-sm text-gray-600 mb-4 italic">Please check on the product(s) of your choice and indicate the quantity to order.</p>
+                                <div id="itemSelection"></div>
                             </div>
 
-                            <!-- Submit -->
-                             <div class="pt-2 border-t border-gray-100 flex flex-col gap-4 items-center"> <!-- Added items-center here -->
-                                <button type="submit" id="submitBtn" class="py-4 px-12 bg-purple-oven text-white font-bold text-xl rounded-full hover:bg-indigo-800 transition shadow-lg inline-flex justify-center items-center gap-2">
-                                    Submit Order
-                                </button>
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 text-center">
+                                <p class="font-bold text-purple-800 mb-1">Important Notice:</p>
+                                <p class="text-sm text-gray-700">As we bake in limited quantities daily, please allow us to check the availability of your order. We shall call you as soon as we can confirm your order.</p>
                             </div>
 
+                            <div class="flex justify-center pt-2"><button type="submit" id="submitBtn" class="py-4 px-16 bg-purple-oven text-white font-bold text-xl rounded-full hover:bg-indigo-800 transition shadow-lg">Submit Order</button></div>
                         </div>
                     </form>
                 </div>
-
-                <!-- Loading Overlay -->
-                <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-                    <div class="bg-white p-6 rounded-xl flex flex-col items-center shadow-2xl">
-                        <div class="spinner border-purple-600 border-t-transparent w-10 h-10 mb-4"></div>
-                        <p class="font-semibold text-gray-700">Sending Order...</p>
-                    </div>
+                <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-8 rounded-2xl flex flex-col items-center"><div class="spinner border-purple-600 border-t-transparent w-10 h-10 mb-4"></div><p>Sending Order...</p></div>
                 </div>
             `;
-            
-            APP_ROOT.innerHTML = formHtml;
 
-            // Initialize Flatpickr Logic immediately after HTML insertion
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            const nextYear = new Date();
-            nextYear.setFullYear(nextYear.getFullYear() + 1);
+            initFormEvents();
+        }
 
-            flatpickr("#datePicker", {
-                minDate: tomorrow,
-                maxDate: nextYear,
+        function initFormEvents() {
+            const form = document.getElementById('orderForm');
+            const pickup = document.getElementById('pickupSelect');
+            const deliveryFields = document.getElementById('deliveryFields');
+            const deliveryInput = document.getElementById('deliveryInput');
+            const landmarkInput = document.getElementById('landmarkInput');
+            const giftContainer = document.getElementById('giftContainer');
+            const giftToggle = document.getElementById('giftToggle');
+            const giftFields = document.getElementById('giftFields');
+
+            form.querySelectorAll('input[name="orderType"]').forEach(r => {
+                r.onchange = (e) => {
+                    const isD = e.target.value === 'Delivery';
+                    pickup.classList.toggle('hidden', isD);
+                    deliveryFields.classList.toggle('hidden', !isD);
+                    giftContainer.classList.toggle('hidden', !isD);
+                    
+                    pickup.required = !isD;
+                    deliveryInput.required = isD;
+
+                    // Reset gift toggle if switching back to pickup
+                    if (!isD) {
+                        giftToggle.checked = false;
+                        giftFields.classList.add('hidden');
+                    }
+                };
+            });
+
+            giftToggle.onchange = (e) => giftFields.classList.toggle('hidden', !e.target.checked);
+
+            let menuHtml = '';
+            purpleOvenMenuData.forEach((cat, ci) => {
+                // Main Category Wrapper
+                menuHtml += `<div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer p-4 bg-gray-50 hover:bg-purple-50 transition-colors">
+                            <h3 class="text-lg font-bold text-purple-oven">${cat.category}</h3>
+                            <span class="summary-icon text-purple-oven transform transition-transform duration-300">▼</span>
+                        </summary>
+                        <div class="p-4 bg-white border-t border-gray-100 space-y-3">`;
+
+                // Specific note for Bread and Pastries
+                if (cat.category === "Bread and Pastries") {
+                    menuHtml += `<div class="text-sm text-gray-600 italic bg-gray-50 p-3 rounded-md border border-gray-200 mb-4 flex items-start gap-2">
+                        <span class="text-gray-500 mt-0.5 font-bold">*</span>
+                        <span>Orders of 6 to 7 pieces will be packed in a box.</span>
+                    </div>`;
+                }
+
+                cat.subCategories.forEach((sub, si) => {
+                    const renderItems = (items) => items.map((item, ii) => {
+                        const id = `item_${ci}_${si}_${ii}`;
+                        const parts = item.name.split(" - ");
+                        const itemName = parts[0];
+                        const itemUnit = parts.length > 1 ? parts.slice(1).join(" - ") : "";
+                        
+                        return `
+                        <div class="grid grid-cols-[24px_1fr_60px] gap-3 items-center py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
+                            <input type="checkbox" id="${id}" name="orderItem" value="${item.name}" 
+                                class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 cursor-pointer border-gray-300"
+                                onchange="const qty = document.getElementById('qty_${id}'); qty.disabled = !this.checked; if(this.checked) { qty.value = 1; qty.focus(); } else { qty.value = ''; }">
+                            
+                            <label for="${id}" class="text-sm text-gray-700 font-medium cursor-pointer select-none">
+                                ${itemName}
+                                ${itemUnit ? `<span class="block text-xs text-gray-400 font-normal">${itemUnit}</span>` : ''}
+                            </label>
+                            
+                            <input type="number" id="qty_${id}" name="itemQty" min="1" placeholder="0" disabled
+                                class="w-full text-center border border-gray-300 rounded-md py-1 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:bg-gray-100 disabled:text-gray-400">
+                        </div>`;
+                    }).join('');
+
+                    if (sub.name) {
+                        // Subcategory with name (Island style)
+                        menuHtml += `
+                        <details class="group/sub mb-2 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden">
+                            <summary class="flex items-center cursor-pointer p-3 bg-gray-50/50 hover:bg-gray-100 transition-colors select-none">
+                                <svg class="w-4 h-4 text-gray-400 mr-2 transform group-open/sub:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                <h4 class="text-sm font-bold text-gray-700">${sub.name}</h4>
+                            </summary>
+                            <div class="px-3 pb-2 pt-0 border-t border-gray-100">
+                                ${renderItems(sub.items)}
+                            </div>
+                        </details>`;
+                    } else {
+                        // Flat list for unnamed subcategories
+                        menuHtml += `
+                        <div class="bg-white rounded-lg border border-gray-200 p-2">
+                             ${renderItems(sub.items)}
+                        </div>`;
+                    }
+                });
+
+                menuHtml += `</div></details></div>`;
+            });
+            document.getElementById('itemSelection').innerHTML = menuHtml;
+
+            flatpickr("#datePicker", { 
+                minDate: new Date().fp_incr(1), 
                 dateFormat: "Y-m-d",
                 disable: [
                     function(date) {
-                        const m = date.getMonth(); // 0-11
-                        const d = date.getDate();
-                        const y = date.getFullYear();
-
-                        // Every Year: Dec 25 (Month 11) & Jan 1 (Month 0)
-                        if (m === 11 && d === 25) return true;
-                        if (m === 0 && d === 1) return true;
-
-                        // 2026 Specific: April 2 & 3 (Holy Week)
-                        if (y === 2026 && m === 3 && (d === 2 || d === 3)) return true;
-
-                        return false;
+                        // Disable Dec 25 and Jan 1
+                        return (date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 0 && date.getDate() === 1);
                     }
                 ]
             });
+            form.onsubmit = handleSubmission;
         }
 
-        function render() {
-            if (state.view === 'landing') {
-                APP_ROOT.innerHTML = renderLanding();
-            } else if (state.view === 'menu') {
-                APP_ROOT.innerHTML = renderMenu(state.selectedBrand);
-            } else if (state.view === 'order_form') {
-                renderOrderForm();
-            } else if (state.view === 'success') {
-                APP_ROOT.innerHTML = renderSuccess();
-            }
-        }
-        
-        async function submitOrder(e) {
+        async function handleSubmission(e) {
             e.preventDefault();
-            
             if (state.isSubmitting) return;
 
-            // 1. Validation
-            const selectedItemsCount = checkItemSelection();
-            if (selectedItemsCount === 0) {
-                const errorContainer = document.getElementById('itemErrorContainer');
-                errorContainer.innerText = "⚠️ Please select at least one item to order.";
-                errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            } else {
-                document.getElementById('itemErrorContainer').innerText = "";
-            }
+            const items = document.querySelectorAll('input[name="orderItem"]:checked');
+            if (items.length === 0) { alert("Select at least one item."); return; }
 
-            // 2. Gather Data
-            const form = e.target;
-            const formData = new FormData(form);
-            
-            // Build Item List String
-            let orderSummary = "";
-            const checkboxes = form.querySelectorAll('input[name="orderItem"]:checked');
-            checkboxes.forEach(cb => {
-                const qtyInputId = `qty_${cb.id}`;
-                const qty = document.getElementById(qtyInputId).value;
-                const name = cb.value;
-                orderSummary += `• ${qty} x ${name}\n`;
-            });
-
-            const orderId = getNextOrderNumber();
-            const orderType = formData.get('orderType');
-            const location = orderType === 'Pick Up' ? formData.get('pickupLocation') : formData.get('deliveryAddress') + (formData.get('landmark') ? ` (Landmark: ${formData.get('landmark')})` : '');
-            
-            // Create a formatted full message string for default EmailJS templates
-            const fullDetails = 
-`Order ID: ${orderId}
-Name: ${formData.get('customerName')}
-Mobile: ${formData.get('customerMobile')}
-Email: ${formData.get('customerEmail')}
-Type: ${orderType}
-Location: ${location}
-Date: ${formData.get('orderDate')}
-Time: ${formData.get('orderTime')}
-Gift: ${formData.get('isGift') ? 'Yes' : 'No'}
-${formData.get('isGift') ? `Recipient: ${formData.get('recipientName')} (${formData.get('recipientMobile')})\nDedication: ${formData.get('dedication')}` : ''}
-
-Items:
-${orderSummary}`;
-
-            const templateParams = {
-                order_id: orderId,
-                customer_name: formData.get('customerName'),
-                customer_email: formData.get('customerEmail'),
-                customer_mobile: formData.get('customerMobile'),
-                order_type: orderType,
-                location_address: location,
-                order_date: formData.get('orderDate'),
-                order_time: formData.get('orderTime'),
-                is_gift: formData.get('isGift') ? 'YES' : 'NO',
-                recipient_details: formData.get('isGift') ? 
-                    `Name: ${formData.get('recipientName')}\nMobile: ${formData.get('recipientMobile')}\nNote: ${formData.get('dedication')}` : 'N/A',
-                order_summary: orderSummary,
-                
-                // IMPORTANT: Adding generic 'message' fields which are default in many EmailJS templates
-                message: fullDetails,
-                my_message: fullDetails
-            };
-
-            console.log('Sending params:', templateParams); // For debugging
-
-            // 3. Save details and Send Email
-            state.lastOrderDetails = templateParams; // Save details for the success page
             state.isSubmitting = true;
             document.getElementById('loadingOverlay').classList.remove('hidden');
-            document.getElementById('submitBtn').disabled = true;
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            const fd = new FormData(e.target);
+            const orderId = await getOrderNumber();
+
+            let summary = "";
+            items.forEach(cb => {
+                const qty = document.getElementById(`qty_${cb.id}`).value;
+                summary += `• ${qty} x ${cb.value}\n`;
+            });
+
+            const emailParams = {
+                order_id: orderId,
+                customer_name: fd.get('customerName'),
+                customer_mobile: fd.get('customerMobile'),
+                order_summary: summary,
+                message: `Order #${orderId} from ${fd.get('customerName')} (${fd.get('customerMobile')})\n\nItems:\n${summary}`
+            };
+
+            const firestoreData = {
+                order_id: orderId,
+                customer_name: fd.get('customerName'),
+                customer_mobile: fd.get('customerMobile'),
+                customer_email: fd.get('customerEmail'),
+                order_type: fd.get('orderType'),
+                location: fd.get('orderType') === 'Pick Up' ? fd.get('pickupLocation') : fd.get('deliveryAddress'),
+                landmark: fd.get('landmark') || '',
+                order_date: fd.get('orderDate'),
+                order_time: fd.get('orderTime'),
+                order_summary: summary,
+                createdAt: serverTimestamp()
+            };
 
             try {
-                // NOTE: We are using window.emailjs global
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                // Log to Firestore first
+                if (isFirebaseAvailable) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), firestoreData);
+                } else {
+                    console.warn("Firestore not available. Order logged locally only.");
+                }
+                // Send email
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
                 
-                showSuccess(); // Show clean success screen
-
-            } catch (error) {
-                console.error('FAILED...', error);
-                alert("Failed to send order. Please try again or contact us directly.");
+                state.lastOrderDetails = emailParams;
+                state.view = 'success';
+                render();
+            } catch (err) {
+                alert("Submission failed. Please call us.");
+                console.error(err);
             } finally {
                 state.isSubmitting = false;
-                // Elements might be gone if we switched view, so check existence
-                const loading = document.getElementById('loadingOverlay');
-                if(loading) loading.classList.add('hidden');
-                const btn = document.getElementById('submitBtn');
-                if(btn) btn.disabled = false;
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                btn.disabled = false;
             }
         }
 
-        // --- Init ---
-        // FIX: Wrap the initial render call in an IIFE to ensure all function definitions 
-        // in the large script block are processed first, resolving the ReferenceError.
-        (function() {
-            render();
-        })();
+        function renderSuccess() {
+            return `
+                <div class="text-center animate-fadeIn w-full max-w-xl bg-white p-10 rounded-2xl shadow-2xl flex flex-col items-center">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">Order Sent!</h2>
+                    <p class="text-purple-oven font-bold text-xl mb-4">Order #${state.lastOrderDetails.order_id}</p>
+                    <p class="text-lg text-gray-600 mb-8">Expect a call from us before 6pm to confirm. Thank you.</p>
+                    <button onclick="showLanding()" class="px-10 py-3 bg-purple-oven text-white font-medium rounded-full hover:bg-indigo-700 transition shadow-lg">Return to Home</button>
+                </div>
+            `;
+        }
 
+        render();
     </script>
 </body>
 </html>

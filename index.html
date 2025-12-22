@@ -642,12 +642,42 @@
                 summary += `• ${qty} x ${cb.value}\n`;
             });
 
+            // Prepare formatted details
+            const orderType = fd.get('orderType');
+            const locationInfo = orderType === 'Pick Up' 
+                ? `Branch: ${fd.get('pickupLocation')}` 
+                : `Address: ${fd.get('deliveryAddress')}\nLandmark: ${fd.get('landmark') || 'N/A'}`;
+            
+            const giftInfo = fd.get('isGift') 
+                ? `\n[GIFT DETAILS]\nRecipient: ${fd.get('recipientName')}\nMobile: ${fd.get('recipientMobile')}\nDedication: ${fd.get('dedication')}` 
+                : '';
+
+            const fullMessage = `Order #${orderId}
+--------------------------------
+CUSTOMER DETAILS
+Name: ${fd.get('customerName')}
+Mobile: ${fd.get('customerMobile')}
+Email: ${fd.get('customerEmail')}
+
+ORDER DETAILS
+Type: ${orderType}
+${locationInfo}
+Date: ${fd.get('orderDate')}
+Time: ${fd.get('orderTime')}${giftInfo}
+
+ITEMS
+${summary}`;
+
             const emailParams = {
                 order_id: orderId,
                 customer_name: fd.get('customerName'),
                 customer_mobile: fd.get('customerMobile'),
+                customer_email: fd.get('customerEmail'),
+                order_type: orderType,
+                order_date: fd.get('orderDate'),
+                order_time: fd.get('orderTime'),
                 order_summary: summary,
-                message: `Order #${orderId} from ${fd.get('customerName')} (${fd.get('customerMobile')})\n\nItems:\n${summary}`
+                message: fullMessage
             };
 
             const firestoreData = {
@@ -661,6 +691,7 @@
                 order_date: fd.get('orderDate'),
                 order_time: fd.get('orderTime'),
                 order_summary: summary,
+                is_gift: !!fd.get('isGift'),
                 createdAt: serverTimestamp()
             };
 

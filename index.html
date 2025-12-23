@@ -423,6 +423,11 @@
         }
 
         function renderOrderForm() {
+            // --- Delivery Logic ---
+            // User request: "no still disable delivery"
+            // We set this to false to keep it manually disabled for now.
+            const isDeliveryEnabled = false; 
+
             const root = document.getElementById('app');
             root.innerHTML = `
                 <div class="w-full max-w-4xl animate-fadeIn">
@@ -463,10 +468,14 @@
                                 <h3 class="font-bold border-b pb-2">Delivery / Pick Up</h3>
                                 <div class="flex gap-6">
                                     <label><input type="radio" name="orderType" value="Pick Up" checked class="h-5 w-5 text-purple-600"> Pick Up</label>
+                                    ${isDeliveryEnabled ? `
+                                    <label><input type="radio" name="orderType" value="Delivery" class="h-5 w-5 text-purple-600"> Delivery</label>
+                                    ` : `
                                     <label class="text-gray-400 cursor-not-allowed flex items-center gap-2">
                                         <input type="radio" name="orderType" value="Delivery" class="h-5 w-5 text-gray-300" disabled> 
                                         Delivery (Temporarily Unavailable)
                                     </label>
+                                    `}
                                 </div>
                                 <select id="pickupSelect" name="pickupLocation" class="w-full p-3 border rounded-lg"><option value="" disabled selected>Select branch...</option>${pickUpLocations.map(l => `<option value="${l}">${l}</option>`).join('')}</select>
                                 <div id="deliveryFields" class="hidden space-y-2">
@@ -608,13 +617,48 @@
             });
             document.getElementById('itemSelection').innerHTML = menuHtml;
 
+            // --- DATE LOGIC ---
+            // 1. Get current time in Hong Kong (UTC+8)
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const hkTime = new Date(utc + (3600000 * 8));
+
+            // 2. 2PM Cutoff Logic:
+            // If it's before 2PM, minDate is Tomorrow (1 day from now).
+            // If it's 2PM or later, minDate is Day After Tomorrow (2 days from now).
+            let minDateIncr = 1; 
+            if (hkTime.getHours() >= 14) {
+                minDateIncr = 2;
+            }
+
+            // Calculate the actual string for minDate to ensure it respects HKT, not local browser time
+            const minDateObj = new Date(hkTime);
+            minDateObj.setDate(hkTime.getDate() + minDateIncr);
+            const minDateStr = minDateObj.toISOString().split('T')[0];
+
             flatpickr("#datePicker", { 
-                minDate: new Date().fp_incr(1), 
+                minDate: minDateStr, 
                 dateFormat: "Y-m-d",
                 disable: [
                     function(date) {
-                        // Disable Dec 25 and Jan 1
-                        return (date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 0 && date.getDate() === 1);
+                        // Standard Holidays: Dec 25 and Jan 1
+                        if ((date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 0 && date.getDate() === 1)) {
+                            return true;
+                        }
+
+                        // Special Rule: Disable Dec 24 if it is past 12:00 PM on Dec 23 (HKT)
+                        // This logic checks the current HKT time against the requested date
+                        if (date.getMonth() === 11 && date.getDate() === 24) {
+                            // Check if today is Dec 23 and it's 12pm or later
+                            if (hkTime.getMonth() === 11 && hkTime.getDate() === 23 && hkTime.getHours() >= 12) {
+                                return true;
+                            }
+                            // Also block if we are already past Dec 23 (e.g., it is Dec 24)
+                            if (hkTime.getMonth() === 11 && hkTime.getDate() >= 24) {
+                                return true;
+                            }
+                        }
+                        return false;
                     }
                 ]
             });

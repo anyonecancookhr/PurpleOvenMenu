@@ -648,8 +648,8 @@
                 dateFormat: "Y-m-d",
                 disable: [
                     function(date) {
-                        // Standard Holidays: Dec 25 and Jan 1
-                        if ((date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 0 && date.getDate() === 1)) {
+                        // Standard Holidays: Dec 25, Dec 26, and Jan 1
+                        if ((date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 11 && date.getDate() === 26) || (date.getMonth() === 0 && date.getDate() === 1)) {
                             return true;
                         }
 

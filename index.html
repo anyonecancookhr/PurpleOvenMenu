@@ -633,8 +633,9 @@
             // 2. 2PM Cutoff Logic:
             // If it's before 2PM, minDate is Tomorrow (1 day from now).
             // If it's 2PM or later, minDate is Day After Tomorrow (2 days from now).
+            // UPDATE: Changed to 12PM (Noon) per request
             let minDateIncr = 1; 
-            if (hkTime.getHours() >= 14) {
+            if (hkTime.getHours() >= 12) {
                 minDateIncr = 2;
             }
 
@@ -648,8 +649,13 @@
                 dateFormat: "Y-m-d",
                 disable: [
                     function(date) {
-                        // Standard Holidays: Dec 25, Dec 26, and Jan 1
-                        if ((date.getMonth() === 11 && date.getDate() === 25) || (date.getMonth() === 11 && date.getDate() === 26) || (date.getMonth() === 0 && date.getDate() === 1)) {
+                        // Standard Holidays: Dec 25, Dec 26, Dec 31, and Jan 1
+                        if (
+                            (date.getMonth() === 11 && date.getDate() === 25) || 
+                            (date.getMonth() === 11 && date.getDate() === 26) || 
+                            (date.getMonth() === 11 && date.getDate() === 31) || 
+                            (date.getMonth() === 0 && date.getDate() === 1)
+                        ) {
                             return true;
                         }
 

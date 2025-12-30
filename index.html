@@ -457,7 +457,7 @@
                                 </div>
                                 <div class="bg-purple-100/50 p-4 rounded-lg border border-purple-200 shadow-inner">
                                     <h4 class="font-bold text-purple-800">Option 2: Order Online</h4>
-                                    <p class="text-sm">For orders from tomorrow onwards, please provide us with the details below, until 12PM today.</p>
+                                    <p class="text-sm">For orders from tomorrow onwards, please provide us with the details below, until 2PM today.</p>
                                     <p class="text-sm mt-2">We will contact you as soon as we can confirm your order.</p>
                                 </div>
                             </div>
@@ -630,18 +630,38 @@
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const hkTime = new Date(utc + (3600000 * 8));
 
-            // 2. 2PM Cutoff Logic:
-            // If it's before 2PM, minDate is Tomorrow (1 day from now).
-            // If it's 2PM or later, minDate is Day After Tomorrow (2 days from now).
-            // UPDATE: Changed to 12PM (Noon) per request
-            let minDateIncr = 1; 
-            if (hkTime.getHours() >= 12) {
-                minDateIncr = 2;
+            // 2. Calculate Earliest Available Date
+            const currentMonth = hkTime.getMonth(); // 0-11 (0 is Jan, 11 is Dec)
+            const currentDate = hkTime.getDate();
+            const currentHour = hkTime.getHours();
+            
+            let minDateObj = new Date(hkTime);
+
+            // Specific Holiday Rules
+            if (currentMonth === 11 && currentDate === 31) { 
+                // On Dec 31: 
+                // - UNTIL 2PM: accept for Jan 2 (Dec 31 + 2 days)
+                // - AFTER 2PM: accept for Jan 3 onwards (Dec 31 + 3 days)
+                if (currentHour < 14) {
+                    minDateObj.setDate(hkTime.getDate() + 2);
+                } else {
+                    minDateObj.setDate(hkTime.getDate() + 3);
+                }
+            } else if (currentMonth === 0 && currentDate === 1) { 
+                // On Jan 1:
+                // - Accept for Jan 3 onwards (Jan 1 + 2 days)
+                minDateObj.setDate(hkTime.getDate() + 2);
+            } else {
+                // Standard Logic (Jan 2 onwards, and valid for today Dec 30 as well):
+                // - UNTIL 2 PM: accept for next day (hkTime + 1)
+                // - AFTER 2PM: accept for 2 days from current date (hkTime + 2)
+                if (currentHour < 14) {
+                    minDateObj.setDate(hkTime.getDate() + 1);
+                } else {
+                    minDateObj.setDate(hkTime.getDate() + 2);
+                }
             }
 
-            // Calculate the actual string for minDate to ensure it respects HKT, not local browser time
-            const minDateObj = new Date(hkTime);
-            minDateObj.setDate(hkTime.getDate() + minDateIncr);
             const minDateStr = minDateObj.toISOString().split('T')[0];
 
             flatpickr("#datePicker", { 

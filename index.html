@@ -68,6 +68,14 @@
                                         <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Sacred+Heart+Street" target="_blank" class="hover:text-purple-oven hover:underline">- Sacred Heart Street</a></p>
                                     </div>
                                     <div>
+                                        <p class="font-semibold text-purple-oven">San Juan</p>
+                                        <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Santolan+Town+Plaza" target="_blank" class="hover:text-purple-oven hover:underline">- Santolan Town Plaza</a></p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-xs font-bold text-gray-500 mb-1 border-b border-gray-100 pb-1 sm:hidden">8AM – 9PM</p>
+                                    <p class="text-xs font-bold text-transparent mb-1 border-b border-gray-100 pb-1 hidden sm:block">-</p>
+                                    <div>
                                         <p class="font-semibold text-purple-oven">Quezon City</p>
                                         <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Temple+Drive" target="_blank" class="hover:text-purple-oven hover:underline">- Temple Drive</a></p>
                                         <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Scout+Rallos" target="_blank" class="hover:text-purple-oven hover:underline">- Scout Rallos</a></p>
@@ -75,16 +83,6 @@
                                     <div>
                                         <p class="font-semibold text-purple-oven">Alabang</p>
                                         <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Alabang+Town+Center" target="_blank" class="hover:text-purple-oven hover:underline">- Alabang Town Center</a></p>
-                                    </div>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="mb-1 border-b border-gray-100 pb-1 space-y-0.5">
-                                        <p class="text-xs font-bold text-gray-500">11AM – 9PM weekdays</p>
-                                        <p class="text-xs font-bold text-gray-500">10AM – 9PM weekends</p>
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-purple-oven">San Juan</p>
-                                        <p class="text-xs text-gray-600 pl-2"><a href="https://www.google.com/maps/search/Purple+Oven+Santolan+Town+Plaza" target="_blank" class="hover:text-purple-oven hover:underline">- Santolan Town Plaza</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -476,7 +474,7 @@
                 const branch = pickup.value || '';
                 
                 let slots = timeSlotsMM;
-                if (!isDelivery && (branch.includes('San Juan') || branch.includes('Santa Rosa'))) {
+                if (!isDelivery && branch.includes('Santa Rosa')) {
                     slots = timeSlotsSJSR;
                 }
                 

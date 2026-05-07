@@ -522,6 +522,13 @@
                     }
 
                     updateTimeSlots();
+                    initDatePicker(); // Re-initialize calendar to apply delivery blocks
+                    
+                    // clear date if May 10 is selected and we switched to Delivery
+                    const datePickerInput = document.getElementById('datePicker');
+                    if (isD && datePickerInput.value.includes('-05-10') && datePickerInput._flatpickr) {
+                        datePickerInput._flatpickr.clear();
+                    }
                 };
             });
             giftToggle.onchange = (e) => giftFields.classList.toggle('hidden', !e.target.checked);
@@ -797,6 +804,9 @@
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const hkTime = new Date(utc + (3600000 * 8));
             
+            const orderTypeInput = document.querySelector('input[name="orderType"]:checked');
+            const orderType = orderTypeInput ? orderTypeInput.value : 'Pick Up';
+            
             let pTime = new Date(hkTime);
 
             // Trigger the notice if the customer is visiting on a closed day
@@ -848,6 +858,11 @@
                         if (date.getMonth() === 11 && date.getDate() === 24) {
                             if (hkTime.getMonth() === 11 && hkTime.getDate() === 23 && hkTime.getHours() >= 12) return true;
                             if (hkTime.getMonth() === 11 && hkTime.getDate() >= 24) return true;
+                        }
+
+                        // Block May 10 for Delivery
+                        if (orderType === 'Delivery' && date.getMonth() === 4 && date.getDate() === 10) {
+                            return true;
                         }
 
                         return false;

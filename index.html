@@ -223,19 +223,12 @@
                         { name: "Banoffee Pie - whole", price: 1150 }
                     ] },
                     { name: "Little Cakes and Pies", items: [
-                        // Individual Items
                         { name: "Little Carrot Cake - pc", price: 215 }, 
                         { name: "Chocolate Lava Cake - pc", price: 215 }, 
                         { name: "Little Banoffee Pie - pc", price: 215 }, 
                         { name: "Little Apple Crumb Pie - pc", price: 245 }, 
                         { name: "Little Pecan Pie - pc", price: 245 },
-                        
-                        // Smart Assorted Option
-                        { 
-                            name: "Assorted Little Cakes/Pies - box of 6", 
-                            price: 1290, 
-                            type: "assorted_box_6" // Flag for special logic
-                        }
+                        { name: "Assorted Little Cakes/Pies - box of 6", price: 1290, type: "assorted_box_6" }
                     ] }
                 ]
             },
@@ -312,7 +305,6 @@
 
         const pickUpLocations = ['Pasig - Portico', 'Makati - San Antonio Plaza Arcade', 'Makati - Legaspi Street', 'Makati - Sacred Heart Street', 'Quezon City - Temple Drive', 'Quezon City - Scout Rallos', 'Alabang - Alabang Town Center', 'San Juan - Santolan Town Plaza', 'Laguna - Santa Rosa'];
         
-        // Time slot arrays
         const timeSlots = ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM'];
 
         // --- App Loop ---
@@ -401,7 +393,6 @@
                                 </div>
                             </div>
 
-                            <!-- DETAILS -->
                             <div class="space-y-4">
                                 <h3 class="font-bold border-b pb-2">Customer Details</h3>
                                 <div class="form-grid">
@@ -420,6 +411,26 @@
                                 </div>
                                 <select id="pickupSelect" name="pickupLocation" class="w-full p-3 border rounded-lg"><option value="" disabled selected>Select branch...</option>${pickUpLocations.map(l => `<option value="${l}">${l}</option>`).join('')}</select>
                                 <div id="deliveryFields" class="hidden space-y-2">
+                                    <select id="deliveryCity" name="deliveryCity" class="w-full p-3 border rounded-lg">
+                                        <option value="" disabled selected>Select city...</option>
+                                        <option value="Caloocan">Caloocan</option>
+                                        <option value="Las Piñas">Las Piñas</option>
+                                        <option value="Makati">Makati</option>
+                                        <option value="Malabon">Malabon</option>
+                                        <option value="Mandaluyong">Mandaluyong</option>
+                                        <option value="Manila">Manila</option>
+                                        <option value="Marikina">Marikina</option>
+                                        <option value="Muntinlupa">Muntinlupa</option>
+                                        <option value="Navotas">Navotas</option>
+                                        <option value="Parañaque">Parañaque</option>
+                                        <option value="Pasay">Pasay</option>
+                                        <option value="Pasig">Pasig</option>
+                                        <option value="Pateros">Pateros</option>
+                                        <option value="Quezon City">Quezon City</option>
+                                        <option value="San Juan">San Juan</option>
+                                        <option value="Taguig">Taguig</option>
+                                        <option value="Valenzuela">Valenzuela</option>
+                                    </select>
                                     <input type="text" id="deliveryInput" name="deliveryAddress" placeholder="Address *" class="w-full p-3 border rounded-lg">
                                     <input type="text" id="landmarkInput" name="landmark" placeholder="Nearest Landmark" class="w-full p-3 border rounded-lg">
                                 </div>
@@ -443,13 +454,11 @@
                                 </div>
                             </div>
 
-                            <!-- MENU SELECTION -->
                             <div>
                                 <h3 class="font-bold border-b pb-2 mb-4">Select Items</h3>
                                 <div id="itemSelection"></div>
                             </div>
 
-                            <!-- FOOTER / TOTAL -->
                             <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-10 flex justify-between items-center sm:hidden">
                                 <div>
                                     <p class="text-xs text-gray-500">Total Amount</p>
@@ -487,6 +496,7 @@
             const form = document.getElementById('orderForm');
             const pickup = document.getElementById('pickupSelect');
             const deliveryFields = document.getElementById('deliveryFields');
+            const deliveryCity = document.getElementById('deliveryCity');
             const deliveryInput = document.getElementById('deliveryInput');
             const giftContainer = document.getElementById('giftContainer');
             const giftToggle = document.getElementById('giftToggle');
@@ -515,6 +525,7 @@
                     
                     pickup.required = !isD;
                     deliveryInput.required = isD;
+                    deliveryCity.required = isD;
 
                     if (!isD) {
                         giftToggle.checked = false;
@@ -638,7 +649,6 @@
             });
             document.getElementById('itemSelection').innerHTML = menuHtml;
 
-            // --- Logic for Checkboxes & Assorted ---
             const checkboxes = document.querySelectorAll('.item-checkbox');
             
             checkboxes.forEach(cb => {
@@ -666,7 +676,6 @@
                 });
             });
 
-            // --- Logic for Assorted Dropdowns ---
             document.querySelectorAll('.assorted-select').forEach(sel => {
                 sel.addEventListener('change', (e) => {
                     const parentId = e.target.dataset.parent;
@@ -675,7 +684,6 @@
                 });
             });
 
-            // --- Logic for Qty Inputs ---
             document.querySelectorAll('.item-qty').forEach(input => {
                 input.addEventListener('input', calculateTotal);
             });
@@ -710,7 +718,6 @@
                 }
             });
 
-            // Dynamic Price UI Update (Ensure it's never lower than the original base price)
             let dynamicPrice = Math.max(basePrice, currentTotal);
             priceDisplay.innerText = `₱${dynamicPrice.toLocaleString()}`;
 
@@ -738,7 +745,7 @@
                 const qtyInput = document.getElementById(`qty_${cb.id}`);
                 const qty = parseInt(qtyInput.value) || 0;
 
-                // Adjust price dynamically if it's an assorted box 
+                // Add details if Assorted and recalculate subtotal dynamically
                 if (cb.dataset.isAssorted === "true") {
                     const id = cb.id;
                     const container = document.getElementById(`assorted-container-${id}`);
@@ -911,7 +918,6 @@
                 let price = parseFloat(cb.dataset.price) || 0;
                 let details = [];
                 
-                // Add details if Assorted and recalculate subtotal dynamically
                 if(cb.dataset.isAssorted === "true") {
                     const id = cb.id;
                     const container = document.getElementById(`assorted-container-${id}`);
@@ -951,6 +957,7 @@
                 customer_email: fd.get('customerEmail'),
                 order_type: fd.get('orderType'),
                 location: fd.get('orderType') === 'Pick Up' ? fd.get('pickupLocation') : fd.get('deliveryAddress'),
+                delivery_city: fd.get('deliveryCity') || '',
                 landmark: fd.get('landmark') || '',
                 order_date: fd.get('orderDate'),
                 order_time: fd.get('orderTime'),
@@ -964,7 +971,10 @@
             const d = state.pendingOrderData;
             state.lastOrderDetails = d;
             
-            const locationInfo = d.order_type === 'Pick Up' ? `Branch: ${d.location}` : `Address: ${d.location} (Landmark: ${d.landmark})`;
+            const locationInfo = d.order_type === 'Pick Up' 
+                ? `Branch: ${d.location}` 
+                : `Address: ${d.location}, ${d.delivery_city} (Landmark: ${d.landmark})`;
+                
             const fullMessage = `Order #${d.order_id}
 --------------------------------
 CUSTOMER

@@ -145,6 +145,7 @@
         let state = {
             view: 'landing',
             isSubmitting: false,
+            isConfirmFlow: false,
             lastOrderDetails: null,
             pendingOrderData: null,
             totalAmount: 0
@@ -164,142 +165,143 @@
             return `${year}${month}${day}-${hours}${minutes}${seconds}${ms}`;
         }
 
-        // --- ASSORTED POOLS DEFINITION ---
+        // --- ASSORTED POOLS DEFINITION WITH NEW PRICES ---
         const assortedPool = [
-            { name: "Little Carrot Cake", price: 215 },
-            { name: "Chocolate Lava Cake", price: 215 },
-            { name: "Little Banoffee Pie", price: 215 },
-            { name: "Little Apple Crumb Pie", price: 245 },
-            { name: "Little Pecan Pie", price: 245 }
+            { name: "Little Carrot Cake", price: 220 },
+            { name: "Chocolate Lava Cake", price: 220 },
+            { name: "Little Banoffee Pie", price: 220 },
+            { name: "Little Apple Crumb Pie", price: 250 },
+            { name: "Little Pecan Pie", price: 250 }
         ];
 
         const cookiePool = [
-            { name: "Chocolate Macadamia Cookie", price: 100 },
-            { name: "White Chocolate Cashew Cookie", price: 100 },
-            { name: "Chocolate Dipped Cookie", price: 100 },
-            { name: "Double Chocolate Chip Cookie", price: 100 },
-            { name: "White Chunk Chocolate Cookie", price: 100 },
-            { name: "Oatmeal Raisin Cookie", price: 100 }
+            { name: "Reese's Peanut Butter Chip Cookie", price: 105 },
+            { name: "Chocolate Macadamia Cookie", price: 105 },
+            { name: "White Chocolate Cashew Cookie", price: 105 },
+            { name: "Chocolate Dipped Cookie", price: 105 },
+            { name: "Double Chocolate Chip Cookie", price: 105 },
+            { name: "White Chunk Chocolate Cookie", price: 105 },
+            { name: "Oatmeal Raisin Cookie", price: 105 }
         ];
 
-        // --- MENU DATA ---
+        // --- MENU DATA WITH UPDATED PRICES & ORIGINAL GROUPINGS ---
         const purpleOvenMenuData = [
             {
                 category: "Cakes",
                 subCategories: [
                     { name: "Light Cakes (8 In)", items: [
-                        { name: "Honeycomb Crunch Cake - whole", price: 1250 }, 
-                        { name: "Pistachio Stardust - whole", price: 1250 }, 
-                        { name: "Chocolate Honeycomb Crunch Cake - whole", price: 1250 }, 
-                        { name: "Strawberry Kisses - whole", price: 1320 }
+                        { name: "Honeycomb Crunch Cake - whole", price: 1280 }, 
+                        { name: "Pistachio Stardust - whole", price: 1280 }, 
+                        { name: "Chocolate Honeycomb Crunch Cake - whole", price: 1280 }, 
+                        { name: "Strawberry Kisses - whole", price: 1350 }
                     ] },
                     { name: "Cakes with Nutty Layers (8 In)", items: [
-                        { name: "Classic Sans Rival - whole", price: 1200 }, 
-                        { name: "Dark Mocha Sans Rival - whole", price: 1320 }, 
-                        { name: "White Chocolate Sans Rival - whole", price: 1320 }, 
-                        { name: "Rustic Chocolate Torte - whole", price: 1320 }, 
-                        { name: "Merry Cherry Torte - whole", price: 1320 }, 
-                        { name: "Mango Walnut Torte - whole", price: 1320 }, 
-                        { name: "Lemon Torte - whole", price: 1320 }
+                        { name: "Classic Sans Rival - whole", price: 1230 }, 
+                        { name: "Dark Mocha Sans Rival - whole", price: 1350 }, 
+                        { name: "White Chocolate Sans Rival - whole", price: 1350 }, 
+                        { name: "Rustic Chocolate Torte - whole", price: 1350 }, 
+                        { name: "Merry Cherry Torte - whole", price: 1350 }, 
+                        { name: "Mango Walnut Torte - whole", price: 1350 }, 
+                        { name: "Lemon Torte - whole", price: 1350 }
                     ] },
                     { name: "Chocolate Cakes (8 In)", items: [
-                        { name: "Grandma’s Chocolate Cake - whole", price: 1050 }, 
-                        { name: "Chocolate Dome Cake - whole", price: 1050 }, 
-                        { name: "Chocolate Campfire - whole", price: 1200 }, 
-                        { name: "Classic Chocolate Cake - whole", price: 1020 }, 
-                        { name: "Caramel Sauce", price: 235 }
+                        { name: "Grandma’s Chocolate Cake - whole", price: 1100 }, 
+                        { name: "Chocolate Dome Cake - whole", price: 1100 }, 
+                        { name: "Chocolate Campfire - whole", price: 1250 }, 
+                        { name: "Classic Chocolate Cake - whole", price: 1050 }, 
+                        { name: "Caramel Sauce", price: 240 }
                     ] },
                     { name: "Cheesecakes (8 In)", items: [
-                        { name: "New York Cheesecake - whole", price: 1530 }, 
-                        { name: "Blueberry Cheesecake - whole", price: 1530 }, 
-                        { name: "Oreo Cheesecake - whole", price: 1530 }
+                        { name: "New York Cheesecake - whole", price: 1560 }, 
+                        { name: "Blueberry Cheesecake - whole", price: 1560 }, 
+                        { name: "Oreo Cheesecake - whole", price: 1560 }
                     ] },
                     { name: "Tub Desserts (8x14 In)", items: [
-                        { name: "Tiramisu - whole", price: 1750 }, 
-                        { name: "Strawberries and Cream - whole", price: 1750 }
+                        { name: "Tiramisu - whole", price: 1800 }, 
+                        { name: "Strawberries and Cream - whole", price: 1800 }
                     ] },
                     { name: "Pies (9 In)", items: [
-                        { name: "Apple Crumb Pie - whole", price: 1150 }, 
-                        { name: "Banoffee Pie - whole", price: 1150 }
+                        { name: "Apple Crumb Pie - whole", price: 1180 }, 
+                        { name: "Banoffee Pie - whole", price: 1180 }
                     ] },
                     { name: "Little Cakes and Pies", items: [
-                        { name: "Little Carrot Cake - pc", price: 215 }, 
-                        { name: "Chocolate Lava Cake - pc", price: 215 }, 
-                        { name: "Little Banoffee Pie - pc", price: 215 }, 
-                        { name: "Little Apple Crumb Pie - pc", price: 245 }, 
-                        { name: "Little Pecan Pie - pc", price: 245 },
-                        { name: "Assorted Little Cakes/Pies - box of 6", price: 1290, type: "assorted_box_6" }
+                        { name: "Little Carrot Cake - pc", price: 220 }, 
+                        { name: "Chocolate Lava Cake - pc", price: 220 }, 
+                        { name: "Little Banoffee Pie - pc", price: 220 }, 
+                        { name: "Little Apple Crumb Pie - pc", price: 250 }, 
+                        { name: "Little Pecan Pie - pc", price: 250 },
+                        { name: "Assorted Little Cakes/Pies - box of 6", price: 1320, type: "assorted_box_6" }
                     ] }
                 ]
             },
             {
                 category: "Bars",
                 subCategories: [{ name: "", items: [
-                    { name: "Mango Bars Half - 16pc", price: 500 }, { name: "Mango Bars Whole - 32pc", price: 940 }, 
-                    { name: "Lemon Bars Half - 16pc", price: 500 }, { name: "Lemon Bars Whole - 32pc", price: 940 }, 
-                    { name: "Double Chocolate Brownies Half - 16pc", price: 500 }, { name: "Double Chocolate Brownies Whole - 32pc", price: 940 }, 
-                    { name: "Fudge Brownies Half - 16pc", price: 500 }, { name: "Fudge Brownies Whole - 32pc", price: 940 }, 
-                    { name: "Food for the Gods Half - 16pc", price: 500 }, { name: "Food for the Gods Whole - 32pc", price: 940 }, 
-                    { name: "Chocolate Revel Bars Half - 16pc", price: 500 }, { name: "Chocolate Revel Bars Whole - 32pc", price: 940 }
+                    { name: "Mango Bars Half - 16pc", price: 510 }, { name: "Mango Bars Whole - 32pc", price: 960 }, 
+                    { name: "Lemon Bars Half - 16pc", price: 510 }, { name: "Lemon Bars Whole - 32pc", price: 960 }, 
+                    { name: "Double Chocolate Brownies Half - 16pc", price: 510 }, { name: "Double Chocolate Brownies Whole - 32pc", price: 960 }, 
+                    { name: "Fudge Brownies Half - 16pc", price: 510 }, { name: "Fudge Brownies Whole - 32pc", price: 960 }, 
+                    { name: "Food for the Gods Half - 16pc", price: 510 }, { name: "Food for the Gods Whole - 32pc", price: 960 }, 
+                    { name: "Chocolate Revel Bars Half - 16pc", price: 510 }, { name: "Chocolate Revel Bars Whole - 32pc", price: 960 }
                 ] }]
             },
             {
                 category: "Cookies",
                 subCategories: [{ name: "", items: [
-                    { name: "Chocolate Macadamia Cookie - pc", price: 100 }, 
-                    { name: "White Chocolate Cashew Cookie - pc", price: 100 }, 
-                    { name: "Chocolate Dipped Cookie - pc", price: 100 }, 
-                    { name: "Double Chocolate Chip Cookie - pc", price: 100 }, 
-                    { name: "White Chunk Chocolate Cookie - pc", price: 100 }, 
-                    { name: "Oatmeal Raisin Cookie - pc", price: 100 }, 
-                    { name: "Assorted Cookies - box of 6", price: 600, type: "assorted_cookie_6" },
-                    { name: "Assorted Cookies - box of 8", price: 800, type: "assorted_cookie_8" },
-                    { name: "Chocolate Crinkles - box of 12", price: 500 }
+                    { name: "Reese's Peanut Butter Chip Cookie - pc", price: 105 },
+                    { name: "Chocolate Macadamia Cookie - pc", price: 105 }, 
+                    { name: "White Chocolate Cashew Cookie - pc", price: 105 }, 
+                    { name: "Chocolate Dipped Cookie - pc", price: 105 }, 
+                    { name: "Double Chocolate Chip Cookie - pc", price: 105 }, 
+                    { name: "White Chunk Chocolate Cookie - pc", price: 105 }, 
+                    { name: "Oatmeal Raisin Cookie - pc", price: 105 }, 
+                    { name: "Assorted Cookies - box of 6", price: 630, type: "assorted_cookie_6" },
+                    { name: "Assorted Cookies - box of 8", price: 840, type: "assorted_cookie_8" },
+                    { name: "Chocolate Crinkles - box of 12", price: 510 }
                 ] }]
             },
             {
                 category: "Loaves",
                 subCategories: [{ name: "", items: [
-                    { name: "Banana Loaf - loaf", price: 500 }, { name: "Carrot Walnut Loaf - loaf", price: 500 }, 
-                    { name: "Orange Almond Loaf - loaf", price: 540 }, { name: "Pistachio Lime Loaf - loaf", price: 540 }, 
-                    { name: "Chocolate Banana Walnut Loaf - loaf", price: 540 }
+                    { name: "Banana Loaf - loaf", price: 510 }, { name: "Carrot Walnut Loaf - loaf", price: 510 }, 
+                    { name: "Orange Almond Loaf - loaf", price: 550 }, { name: "Pistachio Lime Loaf - loaf", price: 550 }, 
+                    { name: "Chocolate Banana Walnut Loaf - loaf", price: 550 }
                 ] }]
             },
             {
                 category: "Snack Packs",
                 subCategories: [{ name: "", items: [
-                    { name: "Chocolate Carousel - pack", price: 265 }, { name: "Purple Crumble - pack", price: 235 }
+                    { name: "Chocolate Carousel - pack", price: 270 }, { name: "Purple Crumble - pack", price: 240 }
                 ] }]
             },
             {
                 category: "Bread and Pastries",
                 subCategories: [
-                    { name: "Quiches", items: [{ name: "Broccoli and Cheese Quiche - pc", price: 145 }, { name: "Quiche Lorraine - pc", price: 145 }] },
-                    { name: "Flaky Pastries", items: [
-                        { name: "Chicken Curry Turnover - pc", price: 120 }, { name: "Chili con Carne Turnover - pc", price: 120 }, 
-                        { name: "Chorizo Roll - pc", price: 120 }, { name: "Sausage Puff - pc", price: 120 }, 
-                        { name: "Spinach Danish - pc", price: 120 }, { name: "Tuna Turnover - pc", price: 120 }
+                    { name: "QUICHES (PC/BOX OF 6)", items: [{ name: "Broccoli and Cheese Quiche - pc", price: 150 }, { name: "Quiche Lorraine - pc", price: 150 }] },
+                    { name: "FLAKY PASTRIES (PC/BOX OF 6)", items: [
+                        { name: "Chicken Curry Turnover - pc", price: 125 }, { name: "Chili con Carne Turnover - pc", price: 125 }, 
+                        { name: "Chorizo Roll - pc", price: 125 }, { name: "Sausage Puff - pc", price: 125 }, 
+                        { name: "Spinach Danish - pc", price: 125 }, { name: "Tuna Turnover - pc", price: 125 },
+                        { name: "Ham and Cheese Croissant - pc", price: 140 }
                     ] },
-                    { name: "Soft Savory Buns", items: [
-                        { name: "Adobo Flakes Bun - pc", price: 100 }, { name: "Pork Asado Bun - pc", price: 100 }, 
-                        { name: "Corned Beef Bun - pc", price: 100 }, { name: "Tuna Bun - pc", price: 100 }, 
-                        { name: "Ham and Cheese Bun - pc", price: 100 }, { name: "Sausage Bun - pc", price: 100 }
+                    { name: "SOFT SAVORY BUNS (PC/BOX OF 6)", items: [
+                        { name: "Adobo Flakes Bun - pc", price: 105 }, { name: "Pork Asado Bun - pc", price: 105 }, 
+                        { name: "Corned Beef Bun - pc", price: 105 }, { name: "Tuna Bun - pc", price: 105 }, 
+                        { name: "Ham and Cheese Bun - pc", price: 105 }, { name: "Bacon and Egg Bun - pc", price: 105 }, { name: "Sausage Bun - pc", price: 105 }
                     ] },
-                    { name: "Croissants", items: [
-                        { name: "Butter Croissant - pc", price: 100 }, { name: "Ham and Cheese Croissant - pc", price: 135 }, { name: "Chocolate Croissant - pc", price: 110 }
+                    { name: "SWEET BREADS (PC/BOX OF 6)", items: [
+                        { name: "Cheese Roll - pc", price: 100 }, { name: "Ensaymada - pc", price: 115 }, { name: "Soft Cinnamon Roll - pc", price: 115 },
+                        { name: "Chocolate Croissant - pc", price: 115 }
                     ] },
-                    { name: "Sweet Breads", items: [
-                        { name: "Cheese Roll - pc", price: 95 }, { name: "Ensaymada - pc", price: 110 }, { name: "Soft Cinnamon Roll - pc", price: 110 }
-                    ] },
-                    { name: "Artisan Breads", items: [
-                        { name: "Cinnamon Raisin Pretzel - pc", price: 120 }, { name: "Parmesan Pretzel - pc", price: 120 }, 
-                        { name: "Sourdough - loaf", price: 260 }, { name: "Raisin Bread - loaf", price: 390 }
+                    { name: "ARTISAN BREADS", items: [
+                        { name: "Butter Croissant - pc", price: 105 }, { name: "Cinnamon Raisin Pretzel - pc", price: 125 }, { name: "Parmesan Pretzel - pc", price: 125 }, 
+                        { name: "Sourdough - loaf", price: 270 }, { name: "Raisin Bread - loaf", price: 400 }
                     ] }
                 ]
             },
             {
                 category: "Reusable Bag",
-                subCategories: [{ name: "", items: [{ name: "Large Bag - pc", price: 25 }, { name: "Small Bag - pc", price: 20 }] }]
+                subCategories: [{ name: "", items: [{ name: "Large Bag - pc", price: 30 }, { name: "Small Bag - pc", price: 25 }] }]
             }
         ];
 
@@ -313,6 +315,7 @@
             if (state.view === 'landing') root.innerHTML = renderLanding();
             else if (state.view === 'menu') root.innerHTML = renderMenu();
             else if (state.view === 'order_form') renderOrderForm();
+            else if (state.view === 'payment') root.innerHTML = renderPayment();
             else if (state.view === 'success') root.innerHTML = renderSuccess();
             window.scrollTo(0,0);
         }
@@ -450,7 +453,7 @@
                                 <div id="giftFields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                                     <input type="text" name="recipientName" placeholder="Recipient Name" class="p-2 border rounded">
                                     <input type="tel" name="recipientMobile" placeholder="Recipient Mobile" class="p-2 border rounded">
-                                    <textarea name="dedication" placeholder="Dedication (Max 180 characters)" maxlength="180" rows="2" class="sm:col-span-2 p-2 border rounded"></textarea>
+                                    <textarea name="dedication" placeholder="Dedication (Max 180 chars)" maxlength="180" rows="2" class="sm:col-span-2 p-2 border rounded"></textarea>
                                 </div>
                             </div>
 
@@ -533,9 +536,8 @@
                     }
 
                     updateTimeSlots();
-                    initDatePicker(); // Re-initialize calendar to apply delivery blocks
+                    initDatePicker();
                     
-                    // clear date if May 10 is selected and we switched to Delivery
                     const datePickerInput = document.getElementById('datePicker');
                     if (isD && datePickerInput.value.includes('-05-10') && datePickerInput._flatpickr) {
                         datePickerInput._flatpickr.clear();
@@ -544,17 +546,23 @@
             });
             giftToggle.onchange = (e) => giftFields.classList.toggle('hidden', !e.target.checked);
             
-            if (document.getElementById('mobileSubmitBtn')) {
-                document.getElementById('mobileSubmitBtn').onclick = (e) => {
+            const mobileBtn = document.getElementById('mobileSubmitBtn');
+            if (mobileBtn) {
+                mobileBtn.onclick = (e) => {
                     if(form.reportValidity()) form.dispatchEvent(new Event('submit'));
                 };
             }
 
-            // --- Menu Rendering ---
+            renderMenuHTML();
+            initDatePicker();
+            form.onsubmit = submitOrder;
+        }
+
+        function renderMenuHTML() {
             let menuHtml = '';
             purpleOvenMenuData.forEach((cat, ci) => {
                 menuHtml += `<div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <details class="group">
+                    <details class="group" ${cat.category === "Bread and Pastries" ? 'open' : ''}>
                         <summary class="flex justify-between items-center cursor-pointer p-4 bg-gray-50 hover:bg-purple-50 transition-colors">
                             <h3 class="text-lg font-bold text-purple-oven">${cat.category}</h3>
                             <span class="summary-icon text-purple-oven transform transition-transform duration-300">▼</span>
@@ -615,6 +623,7 @@
                             <div class="grid grid-cols-[24px_1fr_auto_60px] gap-3 items-center">
                                 <input type="checkbox" id="${id}" name="orderItem" value="${itemName}" data-price="${itemPrice}"
                                     data-is-assorted="${isAssorted}" data-assorted-type="${item.type || ''}" data-count="${isAssorted ? (item.type.includes("8") ? 8 : 6) : 0}"
+                                    data-category="${cat.category}" data-subcategory="${sub.name}"
                                     class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 cursor-pointer border-gray-300 item-checkbox">
                                 
                                 <label for="${id}" class="text-sm text-gray-700 font-medium cursor-pointer select-none">
@@ -632,7 +641,7 @@
 
                     if (sub.name) {
                         menuHtml += `
-                        <details class="group/sub mb-2 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <details class="group/sub mb-2 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden" open>
                             <summary class="flex items-center cursor-pointer p-3 bg-gray-50/50 hover:bg-gray-100 transition-colors select-none">
                                 <svg class="w-4 h-4 text-gray-400 mr-2 transform group-open/sub:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 <h4 class="text-sm font-bold text-gray-700">${sub.name}</h4>
@@ -649,9 +658,7 @@
             });
             document.getElementById('itemSelection').innerHTML = menuHtml;
 
-            const checkboxes = document.querySelectorAll('.item-checkbox');
-            
-            checkboxes.forEach(cb => {
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
                 cb.addEventListener('change', (e) => {
                     const id = e.target.id;
                     const qtyInput = document.getElementById(`qty_${id}`);
@@ -687,11 +694,6 @@
             document.querySelectorAll('.item-qty').forEach(input => {
                 input.addEventListener('input', calculateTotal);
             });
-
-            calculateTotal(); // Init
-            updateTimeSlots(); // Init time slots
-            initDatePicker();
-            form.onsubmit = submitOrder;
         }
 
         function validateAssorted(id) {
@@ -745,7 +747,6 @@
                 const qtyInput = document.getElementById(`qty_${cb.id}`);
                 const qty = parseInt(qtyInput.value) || 0;
 
-                // Add details if Assorted and recalculate subtotal dynamically
                 if (cb.dataset.isAssorted === "true") {
                     const id = cb.id;
                     const container = document.getElementById(`assorted-container-${id}`);
@@ -766,7 +767,6 @@
             if(document.getElementById('desktopTotal')) document.getElementById('desktopTotal').innerText = formatted;
         };
 
-        // Holy week calculation script using Anonymous Gregorian algorithm
         function getEaster(year) {
             const a = year % 19;
             const b = Math.floor(year / 100);
@@ -780,7 +780,7 @@
             const k = c % 4;
             const l = (32 + 2 * e + 2 * i - h - k) % 7;
             const m = Math.floor((a + 11 * h + 22 * l) / 451);
-            const month = Math.floor((h + l - 7 * m + 114) / 31) - 1; // 0-indexed
+            const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
             const day = ((h + l - 7 * m + 114) % 31) + 1;
             return new Date(year, month, day);
         }
@@ -790,10 +790,8 @@
             const d = date.getDate();
             const y = date.getFullYear();
 
-            // Christmas (Dec 25) and New Year's Day (Jan 1)
             if ((m === 11 && d === 25) || (m === 0 && d === 1)) return true;
             
-            // Dynamic Holy Week (Maundy Thursday, Good Friday)
             const easter = getEaster(y);
             const maundyThursday = new Date(easter); maundyThursday.setDate(easter.getDate() - 3);
             const goodFriday = new Date(easter); goodFriday.setDate(easter.getDate() - 2);
@@ -816,43 +814,42 @@
             
             let pTime = new Date(hkTime);
 
-            // Trigger the notice if the customer is visiting on a closed day
             const isTodayClosed = isClosedDay(pTime);
             if (isTodayClosed) {
                 const noticeEl = document.getElementById('holidayNotice');
                 if (noticeEl) noticeEl.classList.remove('hidden');
             }
 
-            // If an order is placed on a closed day, processing starts on the next working day at 9 AM
             while (isClosedDay(pTime)) {
                 pTime.setDate(pTime.getDate() + 1);
                 pTime.setHours(9, 0, 0, 0); 
             }
 
             let minDateObj = new Date(pTime);
-            // 1 day lead time if before 2pm, 2 days if after 2pm
-            if (pTime.getHours() < 14) {
+            
+            if (hkTime.getHours() < 15) {
                 minDateObj.setDate(minDateObj.getDate() + 1);
             } else {
                 minDateObj.setDate(minDateObj.getDate() + 2);
             }
 
-            // If the resulting fulfillment day is a closed day, push it to the next working day
             while (isClosedDay(minDateObj)) {
                 minDateObj.setDate(minDateObj.getDate() + 1);
             }
             
-            // Dec 24 Special Logic: Only accept orders if placed before Dec 23 Noon.
             if (minDateObj.getMonth() === 11 && minDateObj.getDate() === 24) {
                 if (hkTime.getMonth() === 11 && hkTime.getDate() === 23 && hkTime.getHours() >= 12) {
-                    minDateObj.setDate(minDateObj.getDate() + 2); // Skip 24th and 25th -> 26th
+                    minDateObj.setDate(minDateObj.getDate() + 2); 
                     while (isClosedDay(minDateObj)) {
                         minDateObj.setDate(minDateObj.getDate() + 1);
                     }
                 }
             }
 
-            const minDateStr = minDateObj.toISOString().split('T')[0];
+            const minYear = minDateObj.getFullYear();
+            const minMonth = String(minDateObj.getMonth() + 1).padStart(2, '0');
+            const minDay = String(minDateObj.getDate()).padStart(2, '0');
+            const minDateStr = `${minYear}-${minMonth}-${minDay}`;
 
             flatpickr("#datePicker", { 
                 minDate: minDateStr, 
@@ -861,13 +858,11 @@
                     function(date) {
                         if (isClosedDay(date)) return true;
                         
-                        // Dec 24 Logic
                         if (date.getMonth() === 11 && date.getDate() === 24) {
                             if (hkTime.getMonth() === 11 && hkTime.getDate() === 23 && hkTime.getHours() >= 12) return true;
                             if (hkTime.getMonth() === 11 && hkTime.getDate() >= 24) return true;
                         }
 
-                        // Block May 10 for Delivery
                         if (orderType === 'Delivery' && date.getMonth() === 4 && date.getDate() === 10) {
                             return true;
                         }
@@ -878,30 +873,61 @@
             });
         }
 
-        async function submitOrder(e) {
+        function submitOrder(e) {
             e.preventDefault();
             if (state.isSubmitting) return;
 
             const items = document.querySelectorAll('input[name="orderItem"]:checked');
             if (items.length === 0) { alert("Select at least one item."); return; }
 
-            // --- Validate Assorted Boxes ---
             let validationError = null;
+            let counts = { cakes: 0, littleCakes: 0, halfBars: 0, wholeBars: 0, cookies: 0, loaves: 0 };
+            let hasRestrictedItem = false;
+
             items.forEach(cb => {
+                const id = cb.id;
+                const qtyInput = document.getElementById(`qty_${id}`);
+                const qty = parseInt(qtyInput.value) || 0;
+                const name = cb.value;
+                const cat = cb.dataset.category;
+                const subcat = cb.dataset.subcategory;
+
                 if(cb.dataset.isAssorted === "true") {
-                    const id = cb.id;
                     const container = document.getElementById(`assorted-container-${id}`);
                     const selects = container.querySelectorAll('select');
                     const reqCount = parseInt(selects[0].dataset.count);
                     
                     let filled = 0;
-                    selects.forEach(s => {
-                        if(s.value) filled++;
-                    });
+                    selects.forEach(s => { if(s.value) filled++; });
 
                     if(filled < reqCount) {
                         validationError = `Please select all ${reqCount} items for your assorted box.`;
                     }
+                }
+
+                if (cat === "Cakes" && subcat !== "Little Cakes and Pies") counts.cakes += qty;
+                if (subcat === "Little Cakes and Pies") counts.littleCakes += (name.includes("box of 6") ? 6 * qty : qty);
+                if (cat === "Bars") {
+                    if (name.includes("Half")) counts.halfBars += qty;
+                    if (name.includes("Whole")) counts.wholeBars += qty;
+                }
+                if (cat === "Cookies") {
+                    let mult = 1;
+                    if (name.includes("box of 6")) mult = 6;
+                    if (name.includes("box of 8")) mult = 8;
+                    if (name.includes("box of 12")) mult = 12;
+                    counts.cookies += (qty * mult);
+                }
+                if (cat === "Loaves") counts.loaves += qty;
+
+                if (
+                    name.includes("Strawberry Kisses") ||
+                    name.includes("Strawberries and Cream") ||
+                    name.includes("Banoffee Pie") || 
+                    name.includes("Little Banoffee Pie") ||
+                    cat === "Bread and Pastries"
+                ) {
+                    hasRestrictedItem = true;
                 }
             });
 
@@ -936,7 +962,6 @@
                 let lineItem = `• ${qty} x ${cb.value} (₱${subtotal.toLocaleString()})`;
                 
                 if(cb.dataset.isAssorted === "true") {
-                    // Group duplicates logic
                     const counts = {};
                     details.forEach(d => { counts[d] = (counts[d] || 0) + 1; });
                     let detailStr = Object.entries(counts).map(([k,v]) => `${v} ${k}`).join(', ');
@@ -968,8 +993,48 @@
                 dedication: fd.get('dedication') || ''
             };
 
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const hkTime = new Date(utc + (3600000 * 8));
+            const today = new Date(hkTime.getFullYear(), hkTime.getMonth(), hkTime.getDate());
+            
+            const orderDateParts = fd.get('orderDate').split('-'); 
+            const orderDateObj = new Date(orderDateParts[0], orderDateParts[1] - 1, orderDateParts[2]);
+            const diffDays = Math.round((orderDateObj - today) / (1000 * 60 * 60 * 24));
+            
+            let isLeadTimeConfirm = false;
+            if (hkTime.getHours() < 15) {
+                if (diffDays <= 1) isLeadTimeConfirm = true;
+            } else {
+                if (diffDays <= 2) isLeadTimeConfirm = true;
+            }
+
+            state.isConfirmFlow = hasRestrictedItem || 
+                                  counts.cakes > 3 || 
+                                  counts.littleCakes > 12 || 
+                                  counts.halfBars > 10 || 
+                                  counts.wholeBars > 3 || 
+                                  counts.cookies > 18 || 
+                                  counts.loaves > 6 ||
+                                  isLeadTimeConfirm;
+
+            if (state.isConfirmFlow) {
+                processFinalOrder(false);
+            } else {
+                state.view = 'payment';
+                render();
+            }
+        }
+
+        window.processFinalOrder = async (isPaid = false) => {
+            state.isSubmitting = true;
+            render();
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
             const d = state.pendingOrderData;
             state.lastOrderDetails = d;
+
+            const paymentStatusStr = isPaid ? "\nPAYMENT: Proof uploaded securely online" : "\nPAYMENT: To be assessed by team";
             
             const locationInfo = d.order_type === 'Pick Up' 
                 ? `Branch: ${d.location}` 
@@ -991,24 +1056,39 @@ ${d.is_gift ? `\nGIFT: To ${d.recipient_name} (${d.recipient_mobile})\nNote: ${d
 ITEMS
 ${d.order_summary}
 --------------------------------
-TOTAL: ₱${state.totalAmount.toLocaleString()}`;
-
-            const btn = document.getElementById('submitBtn');
-            const mBtn = document.getElementById('mobileSubmitBtn');
-            if(btn) btn.disabled = true;
-            if(mBtn) mBtn.disabled = true;
-
-            state.isSubmitting = true;
-            document.getElementById('loadingOverlay').classList.remove('hidden');
+TOTAL: ₱${state.totalAmount.toLocaleString()} ${paymentStatusStr}`;
 
             try {
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                    order_id: d.order_id,
-                    customer_name: d.customer_name,
-                    customer_mobile: d.customer_mobile,
-                    customer_email: d.customer_email,
-                    message: fullMessage
-                });
+                if (isPaid) {
+                    const pForm = document.getElementById('paymentForm');
+                    
+                    const fields = {
+                        order_id: d.order_id,
+                        customer_name: d.customer_name,
+                        customer_mobile: d.customer_mobile,
+                        customer_email: d.customer_email,
+                        message: fullMessage
+                    };
+                    
+                    for (const [key, value] of Object.entries(fields)) {
+                        let hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = key;
+                        hidden.value = value;
+                        pForm.appendChild(hidden);
+                    }
+
+                    await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, pForm);
+                } else {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        order_id: d.order_id,
+                        customer_name: d.customer_name,
+                        customer_mobile: d.customer_mobile,
+                        customer_email: d.customer_email,
+                        message: fullMessage
+                    });
+                }
+                
                 state.view = 'success';
                 render();
             } catch (err) {
@@ -1017,12 +1097,59 @@ TOTAL: ₱${state.totalAmount.toLocaleString()}`;
             } finally {
                 state.isSubmitting = false;
                 document.getElementById('loadingOverlay').classList.add('hidden');
-                if(btn) btn.disabled = false;
-                if(mBtn) mBtn.disabled = false;
             }
+        };
+
+        function renderPayment() {
+            return `
+                <div class="w-full max-w-lg mx-auto animate-fadeIn relative bg-white rounded-xl shadow-lg border border-gray-100 p-8 mt-10">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Payment Instructions</h2>
+                        <p class="text-sm text-gray-500 leading-relaxed">Please send your payment to the account below and upload the proof of payment to finalize your order.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg mb-6 border border-gray-200 space-y-2 text-center shadow-inner">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Bank Details</p>
+                        <p class="text-xl font-bold text-gray-800">BDO Unibank</p>
+                        <p class="text-md text-gray-700">Acct Name: <span class="font-bold text-gray-900">Anyone Can Cook Inc.</span></p>
+                        <p class="text-md text-gray-700">Acct Number: <span class="font-bold text-purple-oven text-lg">011098003452</span></p>
+                    </div>
+
+                    <div class="bg-purple-50 p-4 rounded-lg mb-6 flex justify-between items-center border border-purple-100">
+                        <span class="font-bold text-purple-900">Total Amount:</span>
+                        <span class="text-2xl font-bold text-purple-oven">₱ ${state.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+
+                    <form id="paymentForm" onsubmit="event.preventDefault(); processFinalOrder(true);">
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Upload Proof of Payment *</label>
+                            <input type="file" name="payment_proof" id="payment_proof" accept="image/*,application/pdf" required class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button type="button" onclick="showOrder()" class="w-full py-3 text-gray-600 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition">← Back</button>
+                            <button type="submit" class="w-full py-3 bg-purple-oven text-white font-bold rounded-lg hover:bg-indigo-800 transition shadow-md">
+                                Submit Order & Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+                    <div class="bg-white p-8 rounded-2xl flex flex-col items-center">
+                        <div class="spinner border-purple-600 border-t-transparent w-10 h-10 mb-4"></div>
+                        <p class="font-bold">Uploading & Sending...</p>
+                        <p class="text-xs text-gray-500 mt-2">Please wait.</p>
+                    </div>
+                </div>
+            `;
         }
 
         function renderSuccess() {
+            const successMsg = state.isConfirmFlow 
+                ? "We have received your order. Expect a call from us before 6pm to confirm."
+                : "<span class='font-bold block mb-2'>Thank you!</span>We have received your order. We shall send your order confirmation before 6pm.";
+
             return `
                 <div class="text-center animate-fadeIn w-full max-w-xl bg-white p-10 rounded-2xl shadow-2xl flex flex-col items-center">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
@@ -1030,7 +1157,7 @@ TOTAL: ₱${state.totalAmount.toLocaleString()}`;
                     </div>
                     <h2 class="text-3xl font-bold mb-2">Order Sent!</h2>
                     <p class="text-purple-oven font-bold text-xl mb-4">Order #${state.lastOrderDetails.order_id}</p>
-                    <p class="text-lg text-gray-600 mb-8">We have received your order. Expect a call from us before 6pm to confirm.</p>
+                    <p class="text-lg text-gray-600 mb-8">${successMsg}</p>
                     <button onclick="showLanding()" class="px-10 py-3 bg-purple-oven text-white font-medium rounded-full hover:bg-indigo-700 transition shadow-lg">Return to Home</button>
                 </div>
             `;

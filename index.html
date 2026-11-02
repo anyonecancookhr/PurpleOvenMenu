@@ -562,7 +562,7 @@
             let menuHtml = '';
             purpleOvenMenuData.forEach((cat, ci) => {
                 menuHtml += `<div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <details class="group" ${cat.category === "Bread and Pastries" ? 'open' : ''}>
+                    <details class="group">
                         <summary class="flex justify-between items-center cursor-pointer p-4 bg-gray-50 hover:bg-purple-50 transition-colors">
                             <h3 class="text-lg font-bold text-purple-oven">${cat.category}</h3>
                             <span class="summary-icon text-purple-oven transform transition-transform duration-300">▼</span>
@@ -641,7 +641,7 @@
 
                     if (sub.name) {
                         menuHtml += `
-                        <details class="group/sub mb-2 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden" open>
+                        <details class="group/sub mb-2 last:mb-0 bg-white border border-gray-200 rounded-lg overflow-hidden">
                             <summary class="flex items-center cursor-pointer p-3 bg-gray-50/50 hover:bg-gray-100 transition-colors select-none">
                                 <svg class="w-4 h-4 text-gray-400 mr-2 transform group-open/sub:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                                 <h4 class="text-sm font-bold text-gray-700">${sub.name}</h4>

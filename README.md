@@ -4,112 +4,108 @@ Purple Oven Web App - Menu Editing Guide
 
 This guide explains how to update the product menu in the index.html file. The menu data is stored in a JavaScript structure, allowing you to easily add categories, subcategories, and individual items.
 
-📍 Where to Edit
+Purple Oven App: Maintenance Guide
 
-Open index.html in a text editor (VS Code, Notepad++, etc.).
+This guide explains how to easily update the prices and images in your Purple Oven web application. All of these changes happen within the index.html file.
 
-Scroll down to the <script> section at the bottom.
+PART 1: Updating Prices
 
-Look for the variable constant named purpleOvenMenuData.
+All the items and their prices are stored in JavaScript arrays inside the <script> tag, starting around line 170.
 
-It looks like this:
+1. Standard Menu Items
 
-const purpleOvenMenuData = [
-    {
-        category: "Cakes",
-        subCategories: [ ... ]
-    },
+Look for the const purpleOvenMenuData = [ section. This contains the categories (Cakes, Bars, Cookies, etc.).
+
+To change a price:
+
+Search (Ctrl+F or Cmd+F) for the name of the item, e.g., "Classic Sans Rival".
+
+You will see a line like this:
+{ name: "Classic Sans Rival - whole", price: 1230 }
+
+Simply change the number next to price:. Do not add commas or currency symbols.
+
+Correct: price: 1300
+
+Incorrect: price: "1,300" or price: ₱1300
+
+2. Assorted Boxes (Base Price)
+
+Inside purpleOvenMenuData, assorted boxes have an extra type attribute.
+Example:
+{ name: "Assorted Little Cakes/Pies - box of 6", price: 1320, type: "assorted_box_6" }
+
+Change the price: 1320 to update the base/minimum price of the box.
+
+3. Items inside Assorted Dropdowns (Assorted Pools)
+
+The individual items inside the assorted dropdowns get their prices from two specific lists located right above purpleOvenMenuData:
+
+const assortedPool = [...] (For Little Cakes & Pies)
+
+const cookiePool = [...] (For Cookies)
+
+To update pool prices:
+Find the pool and change the price number.
+
+const assortedPool = [
+    { name: "Little Carrot Cake", price: 220 }, // Change 220 to your new price
     // ...
 ];
 
 
-1. How to Add a New Item
+PART 2: Updating Menu Images
 
-Items are listed inside the items array of a specific subcategory.
+The app currently displays a gallery of menu images when the user clicks "See Our Menu".
 
-Syntax: { name: "Product Name - Unit" }
+How the current setup works
 
-Example:
-To add a "New Chocolate Cake" to an existing list:
+If you scroll down to the function renderMenu() (around line 348), you will see this line of code:
 
-items: [
-    { name: "Existing Cake - whole" }, 
-    { name: "New Chocolate Cake - whole" } // <--- Add this line (don't forget the comma above!)
-]
+const menuFiles = Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`);
 
 
-Note: The text after the hyphen - (e.g., whole, pc, box) is automatically styled as the "unit" in the order form.
+This automatically looks for 10 images named sequentially in the same folder as your website:
 
-2. How to Add a Subcategory
+PO_Menu-images-0.jpg
 
-Subcategories are groups within a main Category (e.g., "Cheesecakes" inside "Cakes").
+PO_Menu-images-1.jpg
+...all the way to PO_Menu-images-9.jpg.
 
-Find the subCategories array of the parent Category.
+Option A: The Easiest Way (Replace the files)
 
-Add a new object with name and items.
+If you want to update the menu images without touching the code:
 
-Example:
+Save your new menu images as .jpg.
 
-subCategories: [
-    {
-        name: "Existing Subcategory",
-        items: [ ... ]
-    }, 
-    // New Subcategory Block
-    {
-        name: "New Delicious Section (8 In)",
-        items: [
-            { name: "New Item A - pc" },
-            { name: "New Item B - pc" }
-        ]
-    }
-]
+Name them exactly PO_Menu-images-0.jpg, PO_Menu-images-1.jpg, etc.
+
+Upload and replace the old files in your web hosting folder.
+
+Option B: Change the code for new filenames
+
+If you have new images with different names (e.g., menu_page1.png, menu_page2.png), you can change the code to explicitly list your new files.
+
+Change this:
+
+const menuFiles = Array.from({ length: 10 }, (_, i) => `PO_Menu-images-${i}.jpg`);
 
 
-3. How to Add a Main Category
+To a manual list like this:
 
-To add a completely new section (like "Drinks" or "Merchandise"), add a new object to the main purpleOvenMenuData array.
-
-Example:
-
-const purpleOvenMenuData = [
-    // ... existing categories ...
-    
-    {
-        category: "New Category Name",
-        subCategories: [
-            {
-                name: "Optional Subheader", 
-                items: [
-                    { name: "New Product - pc" }
-                ]
-            }
-        ]
-    }
+const menuFiles = [
+    "menu_page1.png",
+    "menu_page2.png",
+    "promo_banner.jpg"
 ];
 
 
-4. Advanced Layout: Collapsible vs. Flat
+(Make sure to put quotes around each filename and separate them with a comma).
 
-The app displays categories in two ways:
+💡 Important Tips for Coding:
 
-Nested (Standard): Clicking the Category reveals Subcategory folders. (Used for "Cakes", "Bread and Pastries").
+Always keep a backup of index.html before making changes. If you accidentally delete a comma or a bracket }, the menu might stop loading.
 
-Flattened: Clicking the Category immediately shows the items (No subcategory folders). (Used for "Bars", "Cookies").
+No Commas in Prices: Javascript needs raw numbers for math (e.g., 1200 not 1,200).
 
-To control this, look for the categoriesToFlatten array in the code:
-
-const categoriesToFlatten = ["Bars", "Cookies", "Loaves", "Snack Packs", "Reusable Bag"];
-
-
-To make a category flat: Add its name to this list. Ensure the subcategory name in your data is empty "".
-
-To make a category nested: Remove its name from this list.
-
-⚠️ Important Syntax Tips
-
-Commas: Always put a comma , after an item or bracket } if there is another one following it.
-
-Quotes: Always use double quotes "" or single quotes '' around text.
-
-Backups: Before editing, save a backup copy of your .html file just in case!
+Clear your Cache: After updating the code or images, remember to clear your browser cache (or open an Incognito window) to see the changes applied immediately.

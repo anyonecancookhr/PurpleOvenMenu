@@ -145,7 +145,6 @@
         let state = {
             view: 'landing',
             isSubmitting: false,
-            isConfirmFlow: false,
             lastOrderDetails: null,
             pendingOrderData: null,
             totalAmount: 0
@@ -315,7 +314,6 @@
             if (state.view === 'landing') root.innerHTML = renderLanding();
             else if (state.view === 'menu') root.innerHTML = renderMenu();
             else if (state.view === 'order_form') renderOrderForm();
-            else if (state.view === 'payment') root.innerHTML = renderPayment();
             else if (state.view === 'success') root.innerHTML = renderSuccess();
             window.scrollTo(0,0);
         }
@@ -827,6 +825,9 @@
 
             let minDateObj = new Date(pTime);
             
+            // SMART DEADLINE LOGIC: 
+            // Before 3 PM -> tomorrow
+            // After 3 PM -> day after tomorrow
             if (hkTime.getHours() < 15) {
                 minDateObj.setDate(minDateObj.getDate() + 1);
             } else {
@@ -873,7 +874,7 @@
             });
         }
 
-        function submitOrder(e) {
+        async function submitOrder(e) {
             e.preventDefault();
             if (state.isSubmitting) return;
 
@@ -881,17 +882,10 @@
             if (items.length === 0) { alert("Select at least one item."); return; }
 
             let validationError = null;
-            let counts = { cakes: 0, littleCakes: 0, halfBars: 0, wholeBars: 0, cookies: 0, loaves: 0 };
-            let hasRestrictedItem = false;
 
             items.forEach(cb => {
                 const id = cb.id;
-                const qtyInput = document.getElementById(`qty_${id}`);
-                const qty = parseInt(qtyInput.value) || 0;
-                const name = cb.value;
-                const cat = cb.dataset.category;
-                const subcat = cb.dataset.subcategory;
-
+                
                 if(cb.dataset.isAssorted === "true") {
                     const container = document.getElementById(`assorted-container-${id}`);
                     const selects = container.querySelectorAll('select');
@@ -903,31 +897,6 @@
                     if(filled < reqCount) {
                         validationError = `Please select all ${reqCount} items for your assorted box.`;
                     }
-                }
-
-                if (cat === "Cakes" && subcat !== "Little Cakes and Pies") counts.cakes += qty;
-                if (subcat === "Little Cakes and Pies") counts.littleCakes += (name.includes("box of 6") ? 6 * qty : qty);
-                if (cat === "Bars") {
-                    if (name.includes("Half")) counts.halfBars += qty;
-                    if (name.includes("Whole")) counts.wholeBars += qty;
-                }
-                if (cat === "Cookies") {
-                    let mult = 1;
-                    if (name.includes("box of 6")) mult = 6;
-                    if (name.includes("box of 8")) mult = 8;
-                    if (name.includes("box of 12")) mult = 12;
-                    counts.cookies += (qty * mult);
-                }
-                if (cat === "Loaves") counts.loaves += qty;
-
-                if (
-                    name.includes("Strawberry Kisses") ||
-                    name.includes("Strawberries and Cream") ||
-                    name.includes("Banoffee Pie") || 
-                    name.includes("Little Banoffee Pie") ||
-                    cat === "Bread and Pastries"
-                ) {
-                    hasRestrictedItem = true;
                 }
             });
 
@@ -993,48 +962,8 @@
                 dedication: fd.get('dedication') || ''
             };
 
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const hkTime = new Date(utc + (3600000 * 8));
-            const today = new Date(hkTime.getFullYear(), hkTime.getMonth(), hkTime.getDate());
-            
-            const orderDateParts = fd.get('orderDate').split('-'); 
-            const orderDateObj = new Date(orderDateParts[0], orderDateParts[1] - 1, orderDateParts[2]);
-            const diffDays = Math.round((orderDateObj - today) / (1000 * 60 * 60 * 24));
-            
-            let isLeadTimeConfirm = false;
-            if (hkTime.getHours() < 15) {
-                if (diffDays <= 1) isLeadTimeConfirm = true;
-            } else {
-                if (diffDays <= 2) isLeadTimeConfirm = true;
-            }
-
-            state.isConfirmFlow = hasRestrictedItem || 
-                                  counts.cakes > 3 || 
-                                  counts.littleCakes > 12 || 
-                                  counts.halfBars > 10 || 
-                                  counts.wholeBars > 3 || 
-                                  counts.cookies > 18 || 
-                                  counts.loaves > 6 ||
-                                  isLeadTimeConfirm;
-
-            if (state.isConfirmFlow) {
-                processFinalOrder(false);
-            } else {
-                state.view = 'payment';
-                render();
-            }
-        }
-
-        window.processFinalOrder = async (isPaid = false) => {
-            state.isSubmitting = true;
-            render();
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-
             const d = state.pendingOrderData;
             state.lastOrderDetails = d;
-
-            const paymentStatusStr = isPaid ? "\nPAYMENT: Proof uploaded securely online" : "\nPAYMENT: To be assessed by team";
             
             const locationInfo = d.order_type === 'Pick Up' 
                 ? `Branch: ${d.location}` 
@@ -1056,38 +985,24 @@ ${d.is_gift ? `\nGIFT: To ${d.recipient_name} (${d.recipient_mobile})\nNote: ${d
 ITEMS
 ${d.order_summary}
 --------------------------------
-TOTAL: ₱${state.totalAmount.toLocaleString()} ${paymentStatusStr}`;
+TOTAL: ₱${state.totalAmount.toLocaleString()}`;
+
+            const btn = document.getElementById('submitBtn');
+            const mBtn = document.getElementById('mobileSubmitBtn');
+            if(btn) btn.disabled = true;
+            if(mBtn) mBtn.disabled = true;
+
+            state.isSubmitting = true;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
 
             try {
-                if (isPaid) {
-                    const pForm = document.getElementById('paymentForm');
-                    
-                    const fields = {
-                        order_id: d.order_id,
-                        customer_name: d.customer_name,
-                        customer_mobile: d.customer_mobile,
-                        customer_email: d.customer_email,
-                        message: fullMessage
-                    };
-                    
-                    for (const [key, value] of Object.entries(fields)) {
-                        let hidden = document.createElement('input');
-                        hidden.type = 'hidden';
-                        hidden.name = key;
-                        hidden.value = value;
-                        pForm.appendChild(hidden);
-                    }
-
-                    await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, pForm);
-                } else {
-                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                        order_id: d.order_id,
-                        customer_name: d.customer_name,
-                        customer_mobile: d.customer_mobile,
-                        customer_email: d.customer_email,
-                        message: fullMessage
-                    });
-                }
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    order_id: d.order_id,
+                    customer_name: d.customer_name,
+                    customer_mobile: d.customer_mobile,
+                    customer_email: d.customer_email,
+                    message: fullMessage
+                });
                 
                 state.view = 'success';
                 render();
@@ -1097,59 +1012,12 @@ TOTAL: ₱${state.totalAmount.toLocaleString()} ${paymentStatusStr}`;
             } finally {
                 state.isSubmitting = false;
                 document.getElementById('loadingOverlay').classList.add('hidden');
+                if(btn) btn.disabled = false;
+                if(mBtn) mBtn.disabled = false;
             }
-        };
-
-        function renderPayment() {
-            return `
-                <div class="w-full max-w-lg mx-auto animate-fadeIn relative bg-white rounded-xl shadow-lg border border-gray-100 p-8 mt-10">
-                    <div class="text-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Payment Instructions</h2>
-                        <p class="text-sm text-gray-500 leading-relaxed">Please send your payment to the account below and upload the proof of payment to finalize your order.</p>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-6 rounded-lg mb-6 border border-gray-200 space-y-2 text-center shadow-inner">
-                        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Bank Details</p>
-                        <p class="text-xl font-bold text-gray-800">BDO Unibank</p>
-                        <p class="text-md text-gray-700">Acct Name: <span class="font-bold text-gray-900">Anyone Can Cook Inc.</span></p>
-                        <p class="text-md text-gray-700">Acct Number: <span class="font-bold text-purple-oven text-lg">011098003452</span></p>
-                    </div>
-
-                    <div class="bg-purple-50 p-4 rounded-lg mb-6 flex justify-between items-center border border-purple-100">
-                        <span class="font-bold text-purple-900">Total Amount:</span>
-                        <span class="text-2xl font-bold text-purple-oven">₱ ${state.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
-
-                    <form id="paymentForm" enctype="multipart/form-data" onsubmit="event.preventDefault(); processFinalOrder(true);">
-                        <div class="mb-6">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Upload Proof of Payment *</label>
-                            <input type="file" name="payment_proof" id="payment_proof" accept="image/*,application/pdf" required class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition">
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <button type="button" onclick="showOrder()" class="w-full py-3 text-gray-600 font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition">← Back</button>
-                            <button type="submit" class="w-full py-3 bg-purple-oven text-white font-bold rounded-lg hover:bg-indigo-800 transition shadow-md">
-                                Submit Order & Payment
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                
-                <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
-                    <div class="bg-white p-8 rounded-2xl flex flex-col items-center">
-                        <div class="spinner border-purple-600 border-t-transparent w-10 h-10 mb-4"></div>
-                        <p class="font-bold">Uploading & Sending...</p>
-                        <p class="text-xs text-gray-500 mt-2">Please wait.</p>
-                    </div>
-                </div>
-            `;
         }
 
         function renderSuccess() {
-            const successMsg = state.isConfirmFlow 
-                ? "We have received your order. Expect a call from us before 6pm to confirm."
-                : "<span class='font-bold block mb-2'>Thank you!</span>We have received your order. We shall send your order confirmation before 6pm.";
-
             return `
                 <div class="text-center animate-fadeIn w-full max-w-xl bg-white p-10 rounded-2xl shadow-2xl flex flex-col items-center">
                     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
@@ -1157,7 +1025,7 @@ TOTAL: ₱${state.totalAmount.toLocaleString()} ${paymentStatusStr}`;
                     </div>
                     <h2 class="text-3xl font-bold mb-2">Order Sent!</h2>
                     <p class="text-purple-oven font-bold text-xl mb-4">Order #${state.lastOrderDetails.order_id}</p>
-                    <p class="text-lg text-gray-600 mb-8">${successMsg}</p>
+                    <p class="text-lg text-gray-600 mb-8">We have received your order. Expect a call from us before 6pm to confirm.</p>
                     <button onclick="showLanding()" class="px-10 py-3 bg-purple-oven text-white font-medium rounded-full hover:bg-indigo-700 transition shadow-lg">Return to Home</button>
                 </div>
             `;
